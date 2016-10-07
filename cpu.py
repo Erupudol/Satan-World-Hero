@@ -15,8 +15,8 @@ class CPU (pygame.sprite.Sprite):
         self.dano = 0
         self.Action = None
         self.Sub_Action = None
-        self.Action_list = ["Chase","Move_up","Move_down"]
-        self.Sub_Action_list = ['Punch','Kick','Stop']
+        self.Action_list = ["Chase","Dont"]
+        self.Sub_Action_list = ['Stop']#'Punch','Kick']
 #==============================================================================
         """Define o movimento do Enemy"""
 #==============================================================================
@@ -66,7 +66,8 @@ class CPU (pygame.sprite.Sprite):
 #==============================================================================
         self.Lives = 2                                                          #Desnecessario
         self.direction = "R"                                                    #Verifica para q lado esta virado a Sprite                
-        self.level = None                                                       #Verifica a fase em questao  
+        self.level = None                                                       #Verifica a fase em questao
+        self.ml = False 
 #==============================================================================
         """Estados:"""
 #==============================================================================
@@ -141,13 +142,13 @@ class CPU (pygame.sprite.Sprite):
             if player.rect.bottom < self.rect.bottom and not player.jump:
                 if self.State('move'):
                     self.Muda_Rota_Sup()
-            elif player.rect.bottom > self.rect.bottom and not player.jump :
+            if player.rect.bottom > self.rect.bottom and not player.jump :
                 if self.State('move'):
                     self.Muda_Rota_Inf()
-            elif player.rect.centerx + 100 < self.rect.left:
+            if player.rect.centerx + 100 < self.rect.left:
                 if self.State('move'):
                     self.go_left()
-            elif player.rect.centerx - 100 > self.rect.right:
+            if player.rect.centerx - 100 > self.rect.right:
                 if self.State('move'):
                     self.go_right()
             elif player.rect.left == self.rect.right or player.rect.right == self.rect.left:
@@ -270,6 +271,7 @@ class CPU (pygame.sprite.Sprite):
         
     def Recive_Dmg(self,player):
             if self.dmg:
+                self.ml = True
                 if player.Atk >self.Def :
                     self.dano = 1 #0.5*(player.Atk - 0.79*self.Def * math.e **(-0.27*(self.Def/player.Atk)))
                     if self.dano < self.hp: 
@@ -277,16 +279,16 @@ class CPU (pygame.sprite.Sprite):
                     else:
                         self.hp = 0
                         self.live = False
-                        #self.Dead()
+                        
                 else:
+                    self.ml = True
                     self.dano = 1#0.5*(0.4*(player.Atk**3/self.Def**2)-0.09*(player.Atk**2/self.Def)+0.1*player.Atk)
                     if self.dano < self.hp: 
                         self.hp = self.hp - self.dano 
                     else:
                         self.hp = 0
                         self.live = False
-                        #self.Dead()
-                    
+                                            
     def Dead(self):
         if not self.live:
             if self.Lives > 0:
@@ -298,52 +300,26 @@ class CPU (pygame.sprite.Sprite):
                 self.live = True
                 self.jump= True
                 self.onGround = False
-                 
-                
+                                 
     def healt_regen(self):
         if self.hp < constants.Hp_Max and not self.live:
             self.hp +=0.01
+            
     def Mp_regen(self):
         if self.mp < constants.Mp_Max and not self.live:
             self.mp += 0.1
             
-    
-    
-            
-    
-    
-    
-
-    def player_hud(self, screen):
+    def enemy_hud(self, screen):
         
         self.Hp_Max_Porc = (constants.Hp_Max/constants.Hp_Max)*100
         self.Hp_Porc = (self.hp/constants.Hp_Max)*100
-        self.Mp_Max_Porc = (constants.Mp_Max/constants.Mp_Max)*100
-        self.Mp_Porc = (self.mp/constants.Mp_Max)*100
-        Vida = constants.Get_Font("font\8-BIT WONDER.TTF", 10)
+        pygame.draw.rect(screen, constants.WHITE, (self.rect.left,self.rect.top - 12,0.75*self.Hp_Max_Porc+2, 12))#61, 104, 1.5*self.Hp_Max_Porc+2, 12)) 
+        pygame.draw.rect(screen, constants.GRAY, (self.rect.left +1,self.rect.top - 11,0.75*self.Hp_Max_Porc, 10))#62, 105, 1.5*self.Hp_Max_Porc, 10))
+        if self.Hp_Porc >0:        
+            pygame.draw.rect(screen, constants.RED, (self.rect.left +1,self.rect.top - 11,0.75*self.Hp_Porc, 10))
+        else:
+            pygame.draw.rect(screen, constants.GRAY, (self.rect.left +1,self.rect.top - 11,0.75*self.Hp_Max_Porc, 10))
         
-        Vidas = Vida.render("x"+str(self.Lives), True, constants.WHITE, None)
-        Vidas_Rect = Vidas.get_rect()
-        Vidas_Rect.x ,Vidas_Rect.y = 190,104 
-        
-       
-        pygame.draw.rect(screen, constants.WHITE,(0,60,60,69))
-        pygame.draw.rect(screen, constants.BGREEN,(1,61,58,67))
-        screen.blit(self.Face, (1,60))
-        pygame.draw.rect(screen, constants.WHITE, (61, 104, 1.5*self.Hp_Max_Porc+2, 12)) 
-        pygame.draw.rect(screen, constants.GRAY, (62, 105, 1.5*self.Hp_Max_Porc, 10))
-        if self.Hp_Porc >= self.Hp_Max_Porc * 0.75:
-            pygame.draw.rect(screen, constants.GREEN, (62, 105, 1.5*self.Hp_Porc, 10))
-        elif self.Hp_Porc >= self.Hp_Max_Porc * 0.25 and self.Hp_Porc < self.Hp_Max_Porc * 0.75:
-            pygame.draw.rect(screen, constants.YELLOW, (62, 105, 1.5*self.Hp_Porc, 10))
-        elif self.Hp_Porc < self.Hp_Max_Porc * 0.25 and self.Hp_Porc > 0:
-            pygame.draw.rect(screen, constants.RED, (62, 105, 1.5*self.Hp_Porc, 10))
-        elif self.Hp_Porc == 0:
-            pygame.draw.rect(screen, constants.GRAY, (62, 105, 1.5*self.Hp_Max_Porc, 10))
-        screen.blit(Vidas,Vidas_Rect)
-        pygame.draw.rect(screen, constants.WHITE, (61, 117, (1.5*self.Mp_Max_Porc)+2, 12))
-        pygame.draw.rect(screen, constants.GRAY, (62, 118, 1.5*self.Mp_Max_Porc, 10))
-        pygame.draw.rect(screen, constants.BLUE, (62, 118, 1.5*self.Mp_Porc, 10))
     
     
     

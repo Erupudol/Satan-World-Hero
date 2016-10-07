@@ -63,6 +63,7 @@ def main():
     pg.time.set_timer(Regen,50)
     pg.time.set_timer(Boss_Action,3000)
     pg.time.set_timer(Boss_Sub_Action,1500)
+    pg.time.set_timer(USEREVENT + 4,5000)
     levels.Start_Screen()
 #==============================================================================
     """Main Loop"""
@@ -139,8 +140,9 @@ def main():
                 player.healt_regen()
                 player.Mp_regen()
             
-            if player.dealdmg:
-                print(Enemy.hp)
+            if event.type == USEREVENT + 4:
+                Enemy.ml=False
+                
             if event.type == Boss_Action:
                 Enemy.boss_action()
                 print (Enemy.boss_action())
@@ -229,6 +231,8 @@ def main():
         player_sprite_list.draw(screen)
         enemy_sprite_list.draw(screen)
         player.player_hud(screen)
+        if Enemy.ml:
+            Enemy.enemy_hud(screen)
 #==============================================================================     
         clock.tick(constants.FPS) 
         pg.display.flip()

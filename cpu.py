@@ -1,155 +1,200 @@
-import pygame
- 
-import constants
- 
-from platforms import MovingPlatform
-from spritesheet_functions import *
-from funçoes_players import *
-import math
+import pygame, constants, math, random
 
 class CPU (pygame.sprite.Sprite):
     def __init__(self):
         
         super().__init__()
         # Stats:
-        #Aumanta a Chance de Critico e Dano Critico
-    
-        #Status para Hud:
-        """constants de animaçao"""
-        self.delay = 0
-        self.i = 0
-        self.s = 0
+#==============================================================================
+        """constantes de animaçao""" 
+#==============================================================================
+        self.delay_standby = self.delay_dmg= self.delay_dead = 0
+        self.delay_punch = self.delay_kick = 0
+        self.i = self.p = self.k = self.h = self.d = self.r = 0
         self.count = 0
-        """Define o Vetor Velocidade do Player""" 
-        self.change_x = 0
+        self.dano = 0
+        self.Action = None
+        self.Sub_Action = None
+        self.Action_list = ["Chase","Move_up","Move_down"]
+        self.Sub_Action_list = ['Punch','Kick','Stop']
+#==============================================================================
+        """Define o movimento do Enemy"""
+#==============================================================================
+        self.change_x = 0   
         self.change_y = 0
         self.Muda_Rota = 0
-        self.Rota_Seg = 0       
-        """Salva as Imagens das Posiçoes ESQUERDA\DIREITA:"""
-        self.Face = None
-        # Personagem Parado:
-        self.Para_Frames_L = []
+        self.Rota_Seg = 0  
+#==============================================================================
+        """Lista de Imagens das Posiçoes ESQUERDA\DIREITA:"""
+#==============================================================================
+        self.Face = None  
+        #==============================================================================
+        """Movimentos de Movimentaçao:""" 
+        #==============================================================================
+        """Personagem Parado:"""
+        self.Para_Frames_L = []     
         self.Para_Frames_R = []
-        # Peronagem Andando:
+        """Peronagem Andando:"""
         self.Move_Frames_L = []
         self.Move_Frames_R = []
-        # Salto Parado:
+        """Salto Parado:"""
         self.Salto_Para_Frames_L = []
         self.Salto_Para_Frames_R = []
-        #Salto Move:
+        """Salto Movimento :"""
         self.Salto_Move_Frames_L = []
         self.Salto_Move_Frames_R = []
-        """Movimentos Defensivos e  Dano :"""
-        self.Def_R = []
-        self.Def_L = []
-        self.Dmg_R = []
-        self.Dmg_R = []
-        self.Dead_R =[]
-        self.Dead_L = []
-        """Movimentos de Ataque:
-            Soco  """
-        self.Atk_P_R = [] 
-        self.Atk_P_L = []
+        #==============================================================================
+        """Movimentos que envolvem dano:"""                                     #Comentarios e Descriçoes
+        #==============================================================================
+        """Recebendo dano """
+        self.Dmg_R = []                                                         #Leva dano para a Direita       
+        self.Dmg_R = []                                                         #Leva dano para a Esquerda
+        """Morte"""
+        self.Dead_R =[]                                                         #Morre para a Direita
+        self.Dead_L = []                                                        #Morre para a Esquerda
+        #==============================================================================
+        """Movimentos de Ataque:"""
+        #==============================================================================
+        """Soco""" 
+        self.Atk_P_R = []                                                       #Socos para Direita
+        self.Atk_P_L = []                                                       #Socos para Esquerda
         """Chute"""
-        self.Atk_K_R = []
-        self.Atk_K_L = []
-        """Soco  Aerio"""
-        self.Atk_AP_R = []
-        self.Atk_AP_L = []
-        """Chute  Aerio"""
-        self.Atk_AK_R = [] 
-        self.Atk_AK_L = []
-        '''Soco com Dash'''
-        self.Atk_DP_R = [] 
-        self.Atk_DP_L = []
-        """Chute com Dash"""
-        self.Atk_DK_R = [] 
-        self.Atk_DK_L = []     
-        
-        # What direction is the player facing?
-        self.Lives = 2
-        self.direction = "R"                 
-        self.level = None
-        """Estados"""
-        self.live = True
-        self.jump = False
-        self.ki_charge = False
-        self.defending = False
-        self.dmg = False
-        self.punch = False
-        self.kick = False
-        self.SPC1_Atk = False
-        self.SPC2_Atk = False
-        self.SPC3_Atk = False
-        self.Ult_Atk = False
-       
-        
-        
-        self.onGround = False
+        self.Atk_K_R = []                                                       #Chutes para Direita
+        self.Atk_K_L = []                                                       #Chutes para Esquerda                          
+#==============================================================================
+        """Vericaçoes:"""
+#==============================================================================
+        self.Lives = 2                                                          #Desnecessario
+        self.direction = "R"                                                    #Verifica para q lado esta virado a Sprite                
+        self.level = None                                                       #Verifica a fase em questao  
+#==============================================================================
+        """Estados:"""
+#==============================================================================
+        self.live = True                                                        #Verifica se o enemy esta vivo 
+        self.jump = False                                                       #Verifica se esta Pulando 
+        self.ki_charge = False                                                  #Verifica se esta carregando o ki 
+        self.dmg = False                                                        #Verifica se esta levando dano
+        self.dealdmg = False
+        self.punch = False                                                      #Verifica se esta socando 
+        self.kick = False                                                       #Verifica se esta chutanto
+        self.SPC1_Atk = False                                                   #Verifica se esta dando o Especial 1
+        self.SPC2_Atk = False                                                   #Verifica se esta dando o Especial 2
+        self.SPC3_Atk = False                                                   #Verifica se esta dando o Especial 3
+        self.Ult_Atk = False                                                    #Verifica se esta Dando o ultimate 
+        self.onGround = False                                                   #Verifica se esta no Chao
+#============================================================================== 
         self.mask = None
-        
+#==============================================================================
+    """Funcoes do  Enemy"""
+#==============================================================================
     def update(self):
         pass
     
     def State(self,event):    
         if event == 'wait':
-            if self.live and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
-                return True
-        elif event == 'move':
-            if self.live and not self.ki_charge and not self.defending and not self.dmg and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
-                return True
-        elif event == 'jump':
-            if self.live and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
-                return True
-        elif event == 'ki_charge':
-            if self.live and not self.jump and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
-                return True
-        elif event == 'defending':
             if self.live and not self.jump and not self.ki_charge and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
                 return True
+        elif event == 'move':
+            if self.live and not self.ki_charge and not self.dmg and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
+                return True
+        elif event == 'jump':
+            if self.live and not self.jump and not self.ki_charge and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
+                return True
+        elif event == 'ki_charge':
+            if self.live and not self.jump and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
+                return True
         elif event == 'punch':
-            if self.live and not self.jump and not self.ki_charge and not self.defending and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
+            if self.live and not self.jump and not self.ki_charge and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
                 return True
         elif event == 'kick':
-            if self.live and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
+            if self.live and not self.jump and not self.ki_charge and not self.punch and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
                 return True
         elif event == 'Special_1':
-            if self.live and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
+            if self.live and not self.jump and not self.ki_charge and not self.punch and not self.kick and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
                 return True
         elif event == 'Special_2':
-            if self.live and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC3_Atk and not self.Ult_Atk:
+            if self.live and not self.jump and not self.ki_charge and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC3_Atk and not self.Ult_Atk:
                 return True
         elif event == 'Special_3':
-            if self.live and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.Ult_Atk:
+            if self.live and not self.jump and not self.ki_charge and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.Ult_Atk:
                 return True
         elif event == 'Ultimate':
-            if self.live and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk:
+            if self.live and not self.jump and not self.ki_charge and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk:
                 return True
+                
+    def boss_action(self): 
+        self.Action = random.choice(self.Action_list)
+        return self.Action
     
+    def sub_action(self):
+        self.Sub_Action = random.choice(self.Sub_Action_list)
+        return self.Sub_Action
+        
     def ai (self,player):
+#============================================================================== 
         if player.rect.centerx > self.rect.centerx:
             self.direction = "R"
         else:
-            self.direction = "L"
-        if player.rect.centerx + 100 < self.rect.left:
-            if self.State('move'):
-                self.go_left()
-        elif player.rect.centerx - 100 > self.rect.right:
-            if self.State('move'):
-                self.go_right()
-        elif player.rect.left == self.rect.right or player.rect.right == self.rect.left:
-#            if player.live and not self.dmg:            
-##                if self.State('punch'):
-##                    self.Soco_1()
-#                pass
-#            else:
+            self.direction = "L" 
+            
+        if self.Action == "Chase":
+            if player.rect.bottom < self.rect.bottom and not player.jump:
+                if self.State('move'):
+                    self.Muda_Rota_Sup()
+            elif player.rect.bottom > self.rect.bottom and not player.jump :
+                if self.State('move'):
+                    self.Muda_Rota_Inf()
+            elif player.rect.centerx + 100 < self.rect.left:
+                if self.State('move'):
+                    self.go_left()
+            elif player.rect.centerx - 100 > self.rect.right:
+                if self.State('move'):
+                    self.go_right()
+            elif player.rect.left == self.rect.right or player.rect.right == self.rect.left:
                 self.stop()
-        if player.rect.bottom < self.rect.bottom and not player.jump:
-            if self.State('move'):
-                self.Muda_Rota_Sup()
-        elif player.rect.bottom > self.rect.bottom and not player.jump :
-            if self.State('move'):
-                self.Muda_Rota_Inf()
+                if player.live and not self.dmg:
+                    if self.Sub_Action == 'Punch':
+                        if self.State('punch'):
+                            self.Soco_1()
+                    if self.Sub_Action == 'Kick':
+                        if self.State('kick'):
+                            self.Chute_1()
+                    if self.Sub_Action == "Stop":
+                        self.stop()
+        else:
+            self.stop()
+#==============================================================================
+#        if player.rect.centerx > self.rect.centerx:
+#            self.direction = "R"
+#        else:
+#            self.direction = "L"
+#        if player.rect.centerx + 100 < self.rect.left:
+#            if self.State('move'):
+#                self.go_left()
+#        elif player.rect.centerx - 100 > self.rect.right:
+#            if self.State('move'):
+#                self.go_right()
+#        elif player.rect.left == self.rect.right or player.rect.right == self.rect.left:
+#            self.stop()
+#            if player.live and not self.dmg:
+##                if clock.get_fps>60:
+#                    if self.Action == 0:
+#                        if self.State('punch'):
+#                            self.Soco_1()
+#                    if self.Action == 1:
+#                        if self.State('kick'):
+#                            self.Chute_1()
+#                    if self.Action == 1 or 2 or 3 or 4 or 5 or 6: 
+#                        pass
+##               
+#            
+#                
+#        if player.rect.bottom < self.rect.bottom and not player.jump:
+#            if self.State('move'):
+#                self.Muda_Rota_Sup()
+#        elif player.rect.bottom > self.rect.bottom and not player.jump :
+#            if self.State('move'):
+#                self.Muda_Rota_Inf()
         
        
         
@@ -223,44 +268,24 @@ class CPU (pygame.sprite.Sprite):
     def Chute_1 (self):
         self.kick = True
         
-    def Recive_Dmg(self):
-        if self.defending:
-            if self.Atk >self.Def :
-                self.dano =  self.Atk - 0.79*self.Def * math.e **(-0.27*(self.Def/self.Atk))
-                self.dano = self.dano * 0.65
-                if self.dano < self.hp: 
-                    self.hp = self.hp - self.dano 
+    def Recive_Dmg(self,player):
+            if self.dmg:
+                if player.Atk >self.Def :
+                    self.dano = 1 #0.5*(player.Atk - 0.79*self.Def * math.e **(-0.27*(self.Def/player.Atk)))
+                    if self.dano < self.hp: 
+                        self.hp = self.hp - self.dano 
+                    else:
+                        self.hp = 0
+                        self.live = False
+                        #self.Dead()
                 else:
-                    self.hp = 0
-                    self.live = False
-                    #self.Dead()
-            else:
-                self.dano =(0.4*(self.Atk**3/self.Def**2)-0.09*(self.Atk**2/self.Def)+0.1*self.Atk)
-                self.dano = self.dano *0.65
-                if self.dano < self.hp: 
-                    self.hp = self.hp - self.dano 
-                else:
-                    self.hp = 0
-                    self.live = False
-                    #self.Dead()
-        else:
-            self.dmg = True
-            if self.Atk >self.Def :
-                self.dano =  1#self.Atk - 0.79*self.Def * math.e **(-0.27*(self.Def/self.Atk))
-                if self.dano < self.hp: 
-                    self.hp = self.hp - self.dano 
-                else:
-                    self.hp = 0
-                    self.live = False
-                    #self.Dead()
-            else:
-                self.dano = 1#(0.4*(self.Atk**3/self.Def**2)-0.09*(self.Atk**2/self.Def)+0.1*self.Atk)
-                if self.dano < self.hp: 
-                    self.hp = self.hp - self.dano 
-                else:
-                    self.hp = 0
-                    self.live = False
-                    #self.Dead()
+                    self.dano = 1#0.5*(0.4*(player.Atk**3/self.Def**2)-0.09*(player.Atk**2/self.Def)+0.1*player.Atk)
+                    if self.dano < self.hp: 
+                        self.hp = self.hp - self.dano 
+                    else:
+                        self.hp = 0
+                        self.live = False
+                        #self.Dead()
                     
     def Dead(self):
         if not self.live:
@@ -273,15 +298,13 @@ class CPU (pygame.sprite.Sprite):
                 self.live = True
                 self.jump= True
                 self.onGround = False
-            
-    def Defesa(self):
-        self.defending = True     
+                 
                 
     def healt_regen(self):
-        if self.hp < constants.Hp_Max and notself.live:
+        if self.hp < constants.Hp_Max and not self.live:
             self.hp +=0.01
     def Mp_regen(self):
-        if self.mp < constants.Mp_Max and notself.live:
+        if self.mp < constants.Mp_Max and not self.live:
             self.mp += 0.1
             
     

@@ -2,7 +2,7 @@
  
 import pygame as pg
 import os 
-import constants, enemy, personagens, collide
+import constants, enemy, personagens, collide, random
 import levels
 from pygame.locals import *
 
@@ -50,7 +50,7 @@ def main():
     Enemy.level = current_level
     player.rect.x = 200
     player.rect.y = constants.SCREEN_HEIGHT - player.rect.height
-    Enemy.rect.x = 2000
+    Enemy.rect.x = 500
     Enemy.rect.y = constants.SCREEN_HEIGHT - Enemy.rect.height
     player_sprite_list.add(player)
     enemy_sprite_list.add(Enemy)
@@ -58,8 +58,11 @@ def main():
     # Used to manage how fast the screen updates
     clock = pg.time.Clock()
     Regen = USEREVENT + 1 
+    Boss_Action = USEREVENT + 2
+    Boss_Sub_Action = USEREVENT + 3
     pg.time.set_timer(Regen,50)
-    pg.time.set_timer(USEREVENT + 2,1000)
+    pg.time.set_timer(Boss_Action,3000)
+    pg.time.set_timer(Boss_Sub_Action,1500)
     levels.Start_Screen()
 #==============================================================================
     """Main Loop"""
@@ -98,9 +101,6 @@ def main():
             pg.key.set_repeat(10,20)
             if pressed[pg.K_UP]: player.Muda_Rota_Sup()
             if pressed[pg.K_DOWN]: player.Muda_Rota_Inf()
-            if pressed[pg.K_DOWN]: 
-                if player.State('move'):
-                    player.go_left()    
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_LEFT:
                     if player.State('move'):
@@ -138,9 +138,16 @@ def main():
             if event.type == Regen:
                 player.healt_regen()
                 player.Mp_regen()
+            
+            if player.dealdmg:
+                print(Enemy.hp)
+            if event.type == Boss_Action:
+                Enemy.boss_action()
+                print (Enemy.boss_action())
+            if event.type == Boss_Sub_Action:
+                Enemy.sub_action()
+                print(Enemy.sub_action())
                 
-            if event.type == USEREVENT+2 :
-                print (Enemy.hp)
 #==============================================================================
         #==============================================================================
         """Configuraçoes dos botoes do controle"""
@@ -187,53 +194,43 @@ def main():
         #        if button_start: # Botão START pressionado
         #==============================================================================
 #==============================================================================
-            
-        
-
-        
-        collide.check_colide(player,Enemy)
-                
-                
+        """ Realiza af funçoes necessarias para relizar ad achoes no game"""                
+        collide.check_colide(player,Enemy)                
         player_sprite_list.update()
         Enemy.ai(player) 
         enemy_sprite_list.update()
         current_level.update()
-        
-       
-        if player.rect.right >= 1000:
-            diff = player.rect.right - 1000
-            player.rect.right = 1000
-            current_level.shift_world(-diff)
+#==============================================================================
+        """Define a posiçao da tela em relaçao ao cenario"""
+        current_position = player.rect.x + abs(current_level.world_shift)
+        if current_position > 100 and  current_position < 1200 and current_level_no != 1:
+            if player.rect.right >= 1000:
+                diff = player.rect.right - 1000
+                player.rect.right = 1000
+                current_level.shift_world(-diff)
   
         
-        if player.rect.left <= 0:
-            diff = 0 - player.rect.left
-            if diff > 0:
-                diff = 0
-            player.rect.left = 0
-            current_level.shift_world(diff)
+            if player.rect.left <= 100:
+                diff = 100 - player.rect.left
+                player.rect.left = 100
+                current_level.shift_world(diff)
  
         
-        current_position = player.rect.x + current_level.world_shift
-        if current_position < current_level.level_limit:
-            player.rect.x = 100
-            if current_level_no < len(level_list)-1:
-                current_level_no += 1
-                current_level = level_list[current_level_no]
-                player.level = current_level
-       
- 
-    
+#        current_position = player.rect.x + abs(current_level.world_shift)
+#        if current_position < current_level.level_limit:
+#            player.rect.x = 100
+#            if current_level_no < len(level_list)-1:
+#                current_level_no += 1
+#                current_level = level_list[current_level_no]
+#                player.level = current_level
+#==============================================================================
+        """Desenha tudo o que aparece na tela"""
         current_level.draw(screen)
         player_sprite_list.draw(screen)
         enemy_sprite_list.draw(screen)
         player.player_hud(screen)
- 
-        
-      
-        clock.tick(constants.FPS)
- 
-       
+#==============================================================================     
+        clock.tick(constants.FPS) 
         pg.display.flip()
  
  

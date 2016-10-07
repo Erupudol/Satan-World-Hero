@@ -6,17 +6,17 @@ from platforms import MovingPlatform
 from spritesheet_functions import *
 
 def Anima(self):
-    while constants.delay > constants.FPS/10:
-        constants.delay = 0
+    while self.delay_standby > constants.FPS/10:
+        self.delay_standby = 0
         if self.direction == "R":
-            self.image = self.Para_Frames_R[constants.i]
+            self.image = self.Para_Frames_R[self.i]
         else:
-            self.image = self.Para_Frames_L[constants.i]
-        if constants.i >= len(self.Para_Frames_R) - 1:
-            constants.i = 0
+            self.image = self.Para_Frames_L[self.i]
+        if self.i >= len(self.Para_Frames_R) - 1:
+            self.i = 0
         else:
-            constants.i += 1            
-    constants.delay += 1
+            self.i += 1            
+    self.delay_standby += 1
 def Anima_Mov(self):
         self.rect.x += self.change_x
         pos = self.rect.x + self.level.world_shift
@@ -28,151 +28,128 @@ def Anima_Mov(self):
             self.image = self.Move_Frames_L[frame]
             
 def Anima_Golpes_Soco(self):
-    if self.punch == True  and constants.count == 0:
+    if self.punch == True  and self.count == 0:
             self.change_x = 0
-            if constants.delay > constants.FPS/35:
-                constants.delay = 0
+            if self.delay_punch > constants.FPS/35:
+                self.delay_punch = 0
                 if self.direction == "R":
-                    self.image = self.Atk_P1_R[constants.s]
-                    self.mask = pygame.mask.from_surface(self.image)
+                    self.image = self.Atk_P1_R[self.p]
                 else:
-                    self.image = self.Atk_P1_L[constants.s]
-                    self.mask = pygame.mask.from_surface(self.image)
-                    self.rect.right -=  self.rect.width - 72 
-                if constants.s >= (len(self.Atk_P1_R)) - 1:
-                    constants.s = 0
-                    if self.direction == "L":
-                        self.rect.right += self.rect.width - 72
+                    self.image = self.Atk_P1_L[self.p]
+                if self.p >= (len(self.Atk_P1_R)) - 1:
+                    self.p = 0
                     self.punch = False
                 else:
-                    constants.s += 1
+                    self.p += 1
+                if self.p == 2:
+                    self.dealdmg = True
+                else:
+                    self.dealdmg = False
                     
             else:
-                constants.delay += 1
-            constants.count = 1
+                self.delay_punch += 1
+            self.count = 1
     
-    elif self.punch == True  and constants.count == 1 :
-            if constants.delay > constants.FPS/35 :
-                constants.delay = 0
+    elif self.punch == True  and self.count == 1 :
+            if self.delay_punch > constants.FPS/35 :
+                self.delay_punch = 0
                 if self.direction == "R":
-                    self.image = self.Atk_P2_R[constants.s]
-                    self.mask = pygame.mask.from_surface(self.image)
+                    self.image = self.Atk_P2_R[self.p]
                 else:
-                    self.image = self.Atk_P2_L[constants.s]
-                    self.mask = pygame.mask.from_surface(self.image)
-                if constants.s >= (len(self.Atk_P1_R)) - 1:
-                    constants.s = 0
+                    self.image = self.Atk_P2_L[self.p]
+                if self.p >= (len(self.Atk_P1_R)) - 1:
+                    self.p = 0
                     self.punch = False
-                    
                 else:
-                    constants.s += 1                  
+                    self.p += 1 
+                if self.p == 2:
+                    self.dealdmg = True
+                else:
+                    self.dealdmg = False
+                                
             else:
-                constants.delay += 1
-            constants.count = 0
+                self.delay_punch += 1
+            self.count = 0
             
-    elif self.punch == True and constants.count >= 1:
-        constants.count = 0
+    elif self.punch == True and self.count >= 1:
+        self.count = 0
         
 def Anima_Golpes_Chute(self):       #Chutes:
     if self.kick:
-        if constants.delay > constants.FPS/25:
-            constants.delay = 0
+        if self.delay_kick > constants.FPS/25:
+            self.delay_kick = 0
             if self.direction == "R":
-                self.image = self.Atk_K1_R[constants.s]
+                self.image = self.Atk_K1_R[self.k]
             else:
-                self.image = self.Atk_K1_L[constants.s]
-            if constants.s >= len(self.Atk_K1_R) - 1:
-                constants.s = 0
+                self.image = self.Atk_K1_L[self.k]
+            if self.k >= len(self.Atk_K1_R) - 1:
+                self.k = 0
                 self.kick = False
             else:
-                constants.s += 1
-                    
+                self.k += 1
+            if self.k == 2:
+                self.dealdmg = True
+            else:
+                self.dealdmg = False
         else:
-            constants.delay += 1
+            self.delay_kick += 1
             
 def Anima_Def(self):
     if self.defending:
-            if constants.delay > constants.FPS/30:
-                constants.delay = 0
+            if self.delay_def > constants.FPS/30:
+                self.delay_def = 0
                 if self.direction == "R":
-                    self.image = self.Def_R[constants.s]
+                    self.image = self.Def_R[self.a]
                 else:
-                    self.image = self.Def_L[constants.s]
-                if constants.s >= len(self.Def_R) - 1 :
-                    constants.s = 1
+                    self.image = self.Def_L[self.a]
+                if self.a >= len(self.Def_R) - 1 :
+                    self.a = 1
                 else:
-                    constants.s +=1
-            else: constants.delay +=1
+                    self.a +=1
+            else: self.delay_def +=1
 def Anima_Dmg(self):
     if self.dmg and self.live:
-            if constants.delay > constants.FPS/30:
-                constants.delay = 0
+            if self.delay_dmg > constants.FPS/30:
+                self.delay_dmg = 0
                 if self.direction == "R":
-                    self.image = self.Dmg_R[constants.s]
+                    self.image = self.Dmg_R[self.h]
                 else:
-                    self.image = self.Dmg_L[constants.s]
-                if constants.s >= len(self.Dmg_R) - 1 :
-                    constants.s = 0
+                    self.image = self.Dmg_L[self.h]
+                if self.h >= len(self.Dmg_R) - 1 :
+                    self.h = 0
                     self.dmg = False
+                
                 else:
-                    constants.s +=1
-            else: constants.delay +=1
+                    self.h +=1
+            else: self.delay_dmg +=1
             
 def Anima_Dead(self):
      if not self.live:
-            if constants.delay > constants.FPS/10:
-                constants.delay = 0
+            if self.delay_dead > constants.FPS/10:
+                self.delay_dead = 0
                 if self.direction == "R":
-                    self.image = self.Dead_R[constants.s]
+                    self.image = self.Dead_R[self.d]
                     self.rect.x += self.change_x
                     self.rect.y = self.rect.bottom 
                 else:
-                    self.image = self.Dead_L[constants.s]
+                    self.image = self.Dead_L[self.d]
                     self.rect.x -= self.change_x
                     self.rect.y = self.rect.bottom 
-                if constants.s >= len(self.Dead_R) - 1 :
-                    constants.s = 4
+                if self.d >= len(self.Dead_R) - 1 :
+                    self.d = 4
                     self.change_x = 0
-                    if self.Lives > 0 and constants.i >= 15:
+                    if self.Lives > 0 and self.i >= 15:
                         self.Dead()
-                        constants.s = 0
-                        constants.i = 0
+                        self.d = 0
+                        self.i = 0
                     else:
-                        constants.i += 1
+                        self.i += 1
                 else:
                     self.change_x -= 10
-                    constants.s +=1
-            else: constants.delay +=1
+                    self.d +=1
+            else: self.delay_dead +=1
             
-def Anima_Golpes_ASoco(self):
-    pass
 
-def Anima_Golpes_AChute(self):
-    pass
-
-def Anima_Golpes_Agarra(self):
-    pass
-
-def Anima_Golpes_DSoco(self):
-    pass
-
-def Anima_Golpes_DChute(self):
-    pass
-
-def Anima_Golpes_SBast(self):
-    pass
-
-def Anima_Golpes_SGrad(self):
-    pass
-
-def Anima_Golpes_SRocket(self):
-    pass
-
-def Anima_Golpes_SDouRocket(self):
-    pass
-
-def Anima_Golpes_SMiss(self):
-    pass
 
 
 

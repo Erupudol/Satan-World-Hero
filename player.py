@@ -11,17 +11,22 @@ class player (pygame.sprite.Sprite):
     def __init__(self):
         
         super().__init__()
-        # Stats:
-        #Aumanta a Chance de Critico e Dano Critico
-    
-        #Status para Hud:
-        
+#==============================================================================
+        """constantes de animaçao""" 
+#==============================================================================
+        self.delay_standby = self.delay_dmg= self.delay_dead = 0
+        self.delay_punch = self.delay_kick = self.delay_def = 0
+        self.i = self.p = self.k = self.h = self.d = self.r = self.a = 0
+        self.count = 0
+        self.dano = 0
+#==============================================================================
         
         """Define o Vetor Velocidade do Player""" 
         self.change_x = 0
         self.change_y = 0
         self.Muda_Rota = 0
-        self.Rota_Seg = 0       
+        self.Rota_Seg = 0 
+        self.dano = 0
         """Salva as Imagens das Posiçoes ESQUERDA\DIREITA:"""
         self.Face = None
         # Personagem Parado:
@@ -73,6 +78,7 @@ class player (pygame.sprite.Sprite):
         self.ki_charge = False
         self.defending = False
         self.dmg = False
+        self.dealdmg=False
         self.punch = False
         self.kick = False
         self.SPC1_Atk = False
@@ -191,30 +197,31 @@ class player (pygame.sprite.Sprite):
     def Chute_1 (self):
         self.kick = True
         
-    def Recive_Dmg(self):
+    def Recive_Dmg(self,enemy):
         if self.defending:
-            if self.Atk >self.Def :
-                self.dano =  self.Atk - 0.79*self.Def * math.e **(-0.27*(self.Def/self.Atk))
-                self.dano = self.dano * 0.65
-                if self.dano < self.hp: 
-                    self.hp = self.hp - self.dano 
+            if self.dmg:
+                if enemy.Atk >self.Def :
+                    self.dano =  enemy.Atk - 0.79*self.Def * math.e **(-0.27*(self.Def/enemy.Atk))
+                    self.dano = self.dano * 0.65
+                    if self.dano < self.hp: 
+                        self.hp = self.hp - self.dano 
+                    else:
+                        self.hp = 0
+                        self.live = False
+                        #self.Dead()
                 else:
-                    self.hp = 0
-                    self.live = False
-                    #self.Dead()
-            else:
-                self.dano =(0.4*(self.Atk**3/self.Def**2)-0.09*(self.Atk**2/self.Def)+0.1*self.Atk)
-                self.dano = self.dano *0.65
-                if self.dano < self.hp: 
-                    self.hp = self.hp - self.dano 
-                else:
-                    self.hp = 0
-                    self.live = False
-                    #self.Dead()
+                    self.dano =(0.4*(enemy.Atk**3/self.Def**2)-0.09*(enemy.Atk**2/self.Def)+0.1*enemy.Atk)
+                    self.dano = self.dano *0.65
+                    if self.dano < self.hp: 
+                        self.hp = self.hp - self.dano 
+                    else:
+                        self.hp = 0
+                        self.live = False
+                        #self.Dead()
         else:
-            self.dmg = True
-            if self.Atk >self.Def :
-                self.dano = 10 #self.Atk - 0.79*self.Def * math.e **(-0.27*(self.Def/self.Atk))
+           if self.dmg:
+            if enemy.Atk >self.Def :
+                self.dano = 0.5*(enemy.Atk - 0.79*self.Def * math.e **(-0.27*(self.Def/enemy.Atk)))
                 if self.dano < self.hp: 
                     self.hp = self.hp - self.dano 
                 else:
@@ -222,7 +229,7 @@ class player (pygame.sprite.Sprite):
                     self.live = False
                     #self.Dead()
             else:
-                self.dano = 10#(0.4*(self.Atk**3/self.Def**2)-0.09*(self.Atk**2/self.Def)+0.1*self.Atk)
+                self.dano = 0.5*(0.4*(enemy.Atk**3/self.Def**2)-0.09*(enemy.Atk**2/self.Def)+0.1*enemy.Atk)
                 if self.dano < self.hp: 
                     self.hp = self.hp - self.dano 
                 else:
@@ -230,9 +237,7 @@ class player (pygame.sprite.Sprite):
                     self.live = False
                     #self.Dead()
                     
-            self.mp = self.mp - 15
-            if self.mp <= 0:
-                self.mp = 0
+            
     def Dead(self):
         if not self.live:
             if self.Lives > 0:

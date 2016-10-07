@@ -102,19 +102,9 @@ class MrSatan(player):
         
         # Set the image the player starts with
         self.image = self.Para_Frames_R[0]
-        self.image = self.Move_Frames_R[0]
-        self.image = self.Salto_Para_Frames_R[0]
-        self.image = self.Atk_P1_R [0]
-        self.image = self.Atk_P2_R [0]
-        self.image = self.Atk_K1_R [0]
-        self.image = self.Atk_K2_R [0]
-        self.image = self.Atk_K3_R [0]
-        self.image = self.Atk_K4_R [0]
-        self.image = self.Def_R[0]
         # Set a reference to the image rect.
         
         self.rect = self.image.get_rect()
-        self.mask = pygame.mask.from_surface(self.image)
 #        self.mask.rect = self.image.get_rect()
     def update(self):
         """ Move the player. """

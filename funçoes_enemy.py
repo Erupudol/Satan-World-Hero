@@ -112,17 +112,11 @@ def Anima_Dead(self):
                 self.delay_dead = 0
                 if self.direction == "R":
                     self.image = self.Dead_R[self.d]
-                    self.rect.x += self.change_x
-                    self.rect.y = self.rect.bottom 
                 else:
                     self.image = self.Dead_L[self.d]
-                    self.rect.x -= self.change_x
-                    self.rect.y = self.rect.bottom 
                 if self.d >= len(self.Dead_R) - 1 :
                     self.d = 4
-                    self.change_x = 0
                 else:
-                    self.change_x -= 10
                     self.d +=1
             else: self.delay_dead +=1
             

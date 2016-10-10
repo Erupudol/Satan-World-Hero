@@ -131,50 +131,51 @@ class CPU (pygame.sprite.Sprite):
     """Inteligencia Artificial"""
 #============================================================================== 
     def ai (self,player):
-        if player.rect.centerx > self.rect.centerx:
-            self.direction = "R"
-        else:
-            self.direction = "L" 
-            
-        if self.Action == "Chase":
-            if player.rect.bottom < self.rect.bottom and not player.jump:
-                if self.State('move'):
-                    self.Muda_Rota_Sup()
-            if player.rect.bottom > self.rect.bottom and not player.jump :
-                if self.State('move'):
-                    self.Muda_Rota_Inf()
-            if player.rect.centerx + 100 < self.rect.left:
-                if self.State('move'):
-                    self.go_left()
-            if player.rect.centerx - 100 > self.rect.right:
-                if self.State('move'):
-                    self.go_right()
-            elif player.rect.left == self.rect.right or player.rect.right == self.rect.left:
-                self.stop()
-                if self.dmg:
-                    self.rec = True
-                self.time_rec()
-                if player.live and not self.rec :
-                    if self.Sub_Action == 'Punch':
-                        if self.State('punch'):
-                            if self.count_p > 25:
-                                self.count_p = 0
-                                self.Soco_1()
-                            else:
-                                self.count_p += 1
-                    if self.Sub_Action == 'Kick':
-                        if self.State('kick'):
-                            if self.count_k > 25:
-                                self.count_k = 0
-                                self.Chute_1()
-                            else:
-                                self.count_k += 1
-                    if self.Sub_Action == "Stop":
-                        self.stop()
-                        
-        if self.Action == "Dont":
-            
-            self.stop()
+        if self.live:
+            if player.rect.centerx > self.rect.centerx:
+                self.direction = "R"
+            else:
+                self.direction = "L" 
+                
+            if self.Action == "Chase":
+                if player.rect.bottom < self.rect.bottom and not player.jump:
+                    if self.State('move'):
+                        self.Muda_Rota_Sup()
+                if player.rect.bottom > self.rect.bottom and not player.jump :
+                    if self.State('move'):
+                        self.Muda_Rota_Inf()
+                if player.rect.centerx + 100 < self.rect.left:
+                    if self.State('move'):
+                        self.go_left()
+                if player.rect.centerx - 100 > self.rect.right:
+                    if self.State('move'):
+                        self.go_right()
+                elif player.rect.left == self.rect.right or player.rect.right == self.rect.left:
+                    self.stop()
+                    if self.dmg:
+                        self.rec = True
+                    self.time_rec()
+                    if player.live and not self.rec :
+                        if self.Sub_Action == 'Punch':
+                            if self.State('punch'):
+                                if self.count_p > 25:
+                                    self.count_p = 0
+                                    self.Soco_1()
+                                else:
+                                    self.count_p += 1
+                        if self.Sub_Action == 'Kick':
+                            if self.State('kick'):
+                                if self.count_k > 25:
+                                    self.count_k = 0
+                                    self.Chute_1()
+                                else:
+                                    self.count_k += 1
+                        if self.Sub_Action == "Stop":
+                            self.stop()
+                            
+            if self.Action == "Dont":
+                if self.State('jump'):
+                    self.Jump()
 #==============================================================================
 # Funçoes Surporte da ai:           
 #==============================================================================

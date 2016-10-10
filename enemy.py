@@ -24,9 +24,6 @@ class Boss_Satan (cpu.CPU):
 
         #Carrega a Spritesheet:
         sprite_sheet = spritesheet_functions.SpriteSheet("Fotos\MrSatan.PNG")   
-        #Face do personagem:
-        self.Face =   sprite_sheet.get_image(1378,348,174,227,0)
-        self.Face =  pygame.transform.scale(self.Face,(58, 67))
         #Sprites Para Personagem Parado:
         self.Para_Frames_R = spritesheet_functions.createSprite(sprite_sheet,[[4,160,72,105,0],[82,160,72,105,0],[159,160,72,105,0]])        
         self.Para_Frames_L = spritesheet_functions.createSprite(sprite_sheet,[[4,160,72,105,0],[82,160,72,105,0],[159,160,72,105,0]],1)
@@ -229,8 +226,195 @@ class Frieza():
 class Frieza_Gold():
     pass
 
-class Cell():
-    pass
+class Cell(cpu.CPU):
+    def __init__(self):
+        """ Constructor function """
+        # Call the parent's constructor
+        super().__init__()
+        
+        constants.Hp_Max = 100
+        self.hp = constants.Hp = constants.Hp_Max
+        constants.Mp_Max = 50
+        self.mp = constants.Mp = constants.Mp_Max
+        self.Atk = constants.Atk = 20
+        self.Def = constants.Def = 10
+        
+
+        #Carrega a Spritesheet:
+        sprite_sheet = spritesheet_functions.SpriteSheet("Fotos\CellHD.PNG")   
+        #Sprites Para Personagem Parado:
+        self.Para_Frames_R = spritesheet_functions.createSprite(sprite_sheet,[[17,35,44,108,0],[71,35,44,108,0], [125,35,44,108,0],[179,35,44,108,0]])        
+        self.Para_Frames_L = spritesheet_functions.createSprite(sprite_sheet,[[17,35,44,108,0],[71,35,44,108,0], [125,35,44,108,0],[179,35,44,108,0]],1)
+        
+        """Movimentos:"""
+        #Sprites para Personagem Andando:
+        self.Move_Frames_R = spritesheet_functions.createSprite(sprite_sheet,[[17,180,49,108,0],[76,180,44,108,0],[130,180,45,108,0],[185,180,45,108,0]])
+        self.Move_Frames_L = spritesheet_functions.createSprite(sprite_sheet,[[17,180,49,108,0],[76,180,44,108,0],[130,180,45,108,0],[185,180,45,108,0]],1)                
+        #Sprites para Salto Parado
+        self.Salto_Para_Frames_R = spritesheet_functions.createSprite(sprite_sheet,[[17,589,65,108,0],[91,589,77,108,0],[176,589,85,108,0],[270,589,77,108,0],[355,589,65,108,0]])        
+        self.Salto_Para_Frames_L = spritesheet_functions.createSprite(sprite_sheet,[[17,589,65,108,0],[91,589,77,108,0],[176,589,85,108,0],[270,589,77,108,0],[355,589,65,108,0]],1)
+        #Sprites Para Salto em Movimento:
+        self.Salto_Move_Frames_R = spritesheet_functions.createSprite(sprite_sheet,[[17,448,65,108,0],[91,448,77,108,0],[176,448,85,108,0],[270,448,77,108,0],[355,589,65,108,0]])                
+        self.Salto_Move_Frames_L = spritesheet_functions.createSprite(sprite_sheet,[[17,448,65,108,0],[91,448,77,108,0],[176,448,85,108,0],[270,448,77,108,0],[355,589,65,108,0]],1)
+        #Recebe Dano:
+        self.Dmg_R = spritesheet_functions.createSprite(sprite_sheet,[[285,3496,50,108,0]])
+        self.Dmg_L = spritesheet_functions.createSprite(sprite_sheet,[[285,3496,50,108,0]],1)
+        #Morte:
+        self.Dead_R = spritesheet_functions.createSprite(sprite_sheet,[[17,3631,55,108,0],[81,3631,80,108,0],[17,3631,55,108,0],[170,3631,109,108,0],[287,3631,104,108,0]])
+        self.Dead_L =spritesheet_functions.createSprite(sprite_sheet, [[17,3631,55,108,0],[81,3631,80,108,0],[17,3631,55,108,0],[170,3631,109,108,0],[287,3631,104,108,0]],1)
+        """Golpes:"""
+       #ATAQUE BASICO:
+        self.Atk_P1_R =spritesheet_functions.createSprite(sprite_sheet,[[775,731,75,108,0],[839,731,78,108,0],[927,731,66,108,0]])
+        self.Atk_P2_R =spritesheet_functions.createSprite(sprite_sheet,[[775,731,75,108,0],[839,731,78,108,0],[927,731,66,108,0]])
+        self.Atk_P1_L =spritesheet_functions.createSprite(sprite_sheet,[[775,731,75,108,0],[839,731,78,108,0],[927,731,66,108,0]],1)
+        self.Atk_P2_L =spritesheet_functions.createSprite(sprite_sheet,[[775,731,75,108,0],[839,731,78,108,0],[927,731,66,108,0]],1)
+        #Chutes:
+        self.Atk_K1_R =spritesheet_functions.createSprite(sprite_sheet,[[17,731,65,108,0],[91,731,76,108,0],[176,731,99,108,0],[285,731,76,108,0],[369,731,65,108,0]])
+        self.Atk_K1_L =spritesheet_functions.createSprite(sprite_sheet,[[17,731,65,108,0],[91,731,76,108,0],[176,731,99,108,0],[285,731,76,108,0],[369,731,65,108,0]],1)
+
+        
+        
+        """Define a imagem inicial"""
+        self.image = self.Para_Frames_R[0]
+        # Set a reference to the image rect.
+        
+        self.rect = self.image.get_rect()
+    def update(self):
+        """ Move the player. """
+        # Gravity
+        self.calc_grav()
+ 
+        # Movimento Sprite Parado
+       
+        if self.State('wait'):
+           Anima(self)            
+        ## Move left/right       
+        if self.change_x != 0 and self.change_y == 0:
+           Anima_Mov(self)             
+    
+        block_hit_list =  self.level.platform_list
+        for block in block_hit_list:
+            
+            if not self.jump:
+                if self.rect.bottom < block.rect.bottom and self.rect.bottom > block.rect.top:
+                    if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
+                        self.rect.right = block.rect.left
+                    if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
+                        self.rect.left = block.rect.right
+                if self.rect.top > block.rect.top and self.rect.top < block.rect.bottom:
+                    if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
+                        self.rect.right = block.rect.left
+                    if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
+                        self.rect.left = block.rect.right
+                if self.rect.top <= block.rect.top and self.rect.bottom >= block.rect.bottom:
+                    if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
+                        self.rect.right = block.rect.left
+                    if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
+                        self.rect.left = block.rect.right
+            if self.rect.top >= block.rect.top and self.rect.bottom <= block.rect.bottom:
+                    if self.rect.left < block.rect.left and self.rect.right > block.rect.left:
+                        self.rect.right = block.rect.left
+                    if self.rect.right > block.rect.right and self.rect.left < block.rect.right:
+                        self.rect.left = block.rect.right
+
+#        
+#        for Enemy in block_enemy_list:
+#             if pygame.sprite.collide_mask(self,Enemy):
+#                 self.change_x = 0
+#                 if self.punch or self.kick:
+#                     Enemy.Dano()
+#==============================================================================
+                
+        # Salto Parado:
+        if self.change_x == 0 and self.change_y != 0:
+            self.rect.top += self.change_y
+            if self.direction == "R" and self.jump:                                
+                if -9.9 >= self.change_y >= -10 :
+                    self.image = self.Salto_Para_Frames_R[0]
+                elif (0 > self.change_y >= -9.9):
+                    self.image = self.Salto_Para_Frames_R[1]
+                elif (0 <= self.change_y <= 2):
+                    self.image = self.Salto_Para_Frames_R[2]
+                elif 2 < self.change_y <= 9.9:
+                    self.image = self.Salto_Para_Frames_R[3]
+                elif 9.9 < self.change_y <= 10:
+                    self.image = self.Salto_Para_Frames_R[4]
+                   
+            elif self.direction == "L"and self.jump:              
+                if -10 <= self.change_y <= -9.9 :
+                    self.image = self.Salto_Para_Frames_L[0]
+                elif (-9.9 < self.change_y <= 0):
+                    self.image = self.Salto_Para_Frames_L[1]
+                elif (0 <= self.change_y <= 2):
+                    self.image = self.Salto_Para_Frames_L[2]
+                elif 2 < self.change_y <= 9.9:
+                    self.image = self.Salto_Para_Frames_L[3]
+                elif 9.9 < self.change_y <= 10:
+                    self.image = self.Salto_Para_Frames_L[4] 
+        #Salto em Movimento 
+        elif self.change_x != 0 and self.change_y != 0:
+            self.rect.y += self.change_y
+            self.rect.x += self.change_x
+                       
+            if self.direction == "R" and self.jump: 
+                if -10 <= self.change_y <= -9.9 :
+                    self.image = self.Salto_Move_Frames_R[0]
+                elif (-9.9 < self.change_y <= 0):
+                    self.image = self.Salto_Move_Frames_R[1]
+                elif (0 <= self.change_y <= 2):
+                    self.image = self.Salto_Move_Frames_R[2]
+                elif 2 < self.change_y <= 9.9:
+                    self.image = self.Salto_Move_Frames_R[3]
+                elif 9.9 < self.change_y <= 10:
+                    self.image = self.Salto_Move_Frames_R[4]
+            elif self.direction == "L" and self.jump:
+                if -10 <= self.change_y <= -9.9 :
+                    self.image = self.Salto_Move_Frames_L[0]
+                elif (-9.9 < self.change_y <= 0):
+                    self.image = self.Salto_Move_Frames_L[1]
+                elif (0 <= self.change_y <= 2):
+                    self.image = self.Salto_Move_Frames_L[2]
+                elif 2 < self.change_y <= 9.9:
+                    self.image = self.Salto_Move_Frames_L[3]
+                elif 9.9 < self.change_y <= 10:
+                    self.image = self.Salto_Move_Frames_L[4]
+                    
+        
+        # Check and see if we hit anything
+        self.onGround = False
+        block_hit_list =  self.level.platform_list
+        for block in block_hit_list: 
+            if self.rect.right > block.rect.left and self.rect.left < block.rect.right:
+                    if self.rect.bottom > block.rect.top and (self.rect.bottom - 10) < block.rect.top:
+                        if self.change_y > 0 and not self.onGround:
+                            self.rect.bottom = block.rect.top
+                            self.onGround = True
+                            self.jump = False
+                            self.change_y = 0
+                    if self.rect.top < block.rect.bottom and (self.rect.top + 10) > block.rect.bottom:
+                        if self.change_y < 0 and not self.onGround:
+                            self.rect.top = block.rect.bottom
+                            
+        block_enemy_list =  self.level.enemy_list
+        
+        for Enemy in block_enemy_list: 
+            if pygame.sprite.collide_rect(self,Enemy) and self.Muda_Rota == Enemy.Muda_Rota: 
+          # Reset our position based on the top/bottom of the object.
+                if self.change_y > 0 :
+                    self.rect.bottom = Enemy.rect.top
+                elif self.change_y < 0:
+                    self.rect.top = Enemy.rect.bottom 
+            # Stop our vertical movement
+                
+            
+            
+            
+        #Golpes:
+        #Socos e Chutes:
+        Anima_Dmg(self)
+        Anima_Dead(self)
+        Anima_Golpes_Soco(self)
+        Anima_Golpes_Chute(self)
 
 class Fat_Buu():
     pass

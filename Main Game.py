@@ -29,7 +29,7 @@ def main():
 #==============================================================================
     """Carrega o Jogar, Inimigos e Fases"""
     player = personagens.MrSatan()
-    enemy_list =[[enemy.Boss_Satan(),constants.SCREEN_WIDTH-50,constants.SCREEN_HEIGHT-500],[enemy.Boss_Satan(),constants.SCREEN_WIDTH-50,constants.SCREEN_HEIGHT-500]]       
+    enemy_list =[[enemy.Boss_Satan(),constants.SCREEN_WIDTH-50,constants.SCREEN_HEIGHT-500],[enemy.Cell(),constants.SCREEN_WIDTH,constants.SCREEN_HEIGHT-500]]       
     level_list = []
     enemy_l=[]
     for inimigo in enemy_list:
@@ -145,7 +145,8 @@ def main():
                 player.Mp_regen()
             
             if event.type == USEREVENT + 4:
-                Enemy.ml=False
+                for Enemy in enemy_l:
+                    Enemy.ml = False
                 
             if event.type == Boss_Action:
                 for Enemy in enemy_l:
@@ -153,12 +154,19 @@ def main():
                     print ("Açoes:" + Enemy.boss_action())
                     print (clock)
                     print(Enemy.rec)
+                    
             if event.type == Boss_Sub_Action:
                 for Enemy in enemy_l:
                     Enemy.sub_action()
                     if Enemy.Action == 'Chase':    
                         print(Enemy.sub_action())
-                
+            for Enemy in enemy_l:
+                if not Enemy.live:
+                    if constants.delay_dead > 85:
+                        constants.delay_dead =  0
+                        active_sprite_list.remove(Enemy)
+                    else:
+                        constants.delay_dead += 1
 #==============================================================================
         #==============================================================================
         """Configuraçoes dos botoes do controle"""
@@ -242,8 +250,9 @@ def main():
         current_level.draw(screen)
         active_sprite_list.draw(screen)
         player.player_hud(screen)
-        if Enemy.ml:
-            Enemy.enemy_hud(screen)
+        for Enemy in enemy_l:
+            if Enemy.ml:
+                Enemy.enemy_hud(screen)
 #==============================================================================     
         clock.tick(constants.FPS) 
         pg.display.flip()

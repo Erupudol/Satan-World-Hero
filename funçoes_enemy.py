@@ -26,7 +26,7 @@ def Anima_Mov(self):
 def Anima_Golpes_Soco(self):
     if self.punch == True  and self.count == 0:
             self.change_x = 0
-            if self.delay_punch > constants.FPS/35:
+            if self.delay_punch > constants.FPS/45:
                 self.delay_punch = 0
                 if self.direction == "R":
                     self.image = self.Atk_P1_R[self.p]
@@ -46,7 +46,7 @@ def Anima_Golpes_Soco(self):
             self.count = 1
     
     elif self.punch == True  and self.count == 1 :
-            if self.delay_punch > constants.FPS/35 :
+            if self.delay_punch > constants.FPS/45 :
                 self.delay_punch = 0
                 if self.direction == "R":
                     self.image = self.Atk_P2_R[self.p]
@@ -121,12 +121,6 @@ def Anima_Dead(self):
                 if self.d >= len(self.Dead_R) - 1 :
                     self.d = 4
                     self.change_x = 0
-                    if self.Lives > 0 and self.r >= 15:
-                        self.Dead()
-                        self.d = 0
-                        self.r = 0
-                    else:
-                        self.r += 1
                 else:
                     self.change_x -= 10
                     self.d +=1

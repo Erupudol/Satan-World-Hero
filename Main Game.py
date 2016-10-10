@@ -29,9 +29,15 @@ def main():
 #==============================================================================
     """Carrega o Jogar, Inimigos e Fases"""
     player = personagens.MrSatan()
-    Enemy = enemy.Boss_Satan()
+    enemy_list =[[enemy.Boss_Satan(),constants.SCREEN_WIDTH-50,constants.SCREEN_HEIGHT-500],[enemy.Boss_Satan(),constants.SCREEN_WIDTH-50,constants.SCREEN_HEIGHT-500]]       
     level_list = []
-    level_list.append(levels.Level_01(player,enemy))
+    enemy_l=[]
+    for inimigo in enemy_list:
+        Enemy = inimigo[0]
+        Enemy.rect.x = inimigo[1]
+        Enemy.rect.y = inimigo[2] 
+        level_list.append(levels.Level_01(player,Enemy))
+        enemy_l.append(Enemy)#
 #==============================================================================
     """Iniciaiza o Joystick"""
     pg.joystick.init()
@@ -44,16 +50,14 @@ def main():
     current_level_no = 0
     current_level = level_list[current_level_no]
      
-    player_sprite_list = pg.sprite.Group()
-    enemy_sprite_list = pg.sprite.Group()
+    active_sprite_list = pg.sprite.Group()
     player.level = current_level
-    Enemy.level = current_level
     player.rect.x = 200
     player.rect.y = constants.SCREEN_HEIGHT - player.rect.height
-    Enemy.rect.x = 500
-    Enemy.rect.y = constants.SCREEN_HEIGHT - Enemy.rect.height
-    player_sprite_list.add(player)
-    enemy_sprite_list.add(Enemy)
+    active_sprite_list.add(player)
+    for Enemy in enemy_l:
+        Enemy.level = current_level 
+        active_sprite_list.add(Enemy)
 #==============================================================================
     # Used to manage how fast the screen updates
     clock = pg.time.Clock()
@@ -61,8 +65,8 @@ def main():
     Boss_Action = USEREVENT + 2
     Boss_Sub_Action = USEREVENT + 3
     pg.time.set_timer(Regen,50)
-    pg.time.set_timer(Boss_Action,3000)
-    pg.time.set_timer(Boss_Sub_Action,1500)
+    pg.time.set_timer(Boss_Action,1000)
+    pg.time.set_timer(Boss_Sub_Action,500)
     pg.time.set_timer(USEREVENT + 4,5000)
     levels.Start_Screen()
 #==============================================================================
@@ -144,11 +148,16 @@ def main():
                 Enemy.ml=False
                 
             if event.type == Boss_Action:
-                Enemy.boss_action()
-                print (Enemy.boss_action())
+                for Enemy in enemy_l:
+                    Enemy.boss_action()
+                    print ("Açoes:" + Enemy.boss_action())
+                    print (clock)
+                    print(Enemy.rec)
             if event.type == Boss_Sub_Action:
-                Enemy.sub_action()
-                print(Enemy.sub_action())
+                for Enemy in enemy_l:
+                    Enemy.sub_action()
+                    if Enemy.Action == 'Chase':    
+                        print(Enemy.sub_action())
                 
 #==============================================================================
         #==============================================================================
@@ -197,10 +206,11 @@ def main():
         #==============================================================================
 #==============================================================================
         """ Realiza af funçoes necessarias para relizar ad achoes no game"""                
-        collide.check_colide(player,Enemy)                
-        player_sprite_list.update()
-        Enemy.ai(player) 
-        enemy_sprite_list.update()
+        for Enemy in enemy_l:
+            collide.check_colide(player,Enemy)                
+            Enemy.ai(player)
+            
+        active_sprite_list.update()
         current_level.update()
 #==============================================================================
         """Define a posiçao da tela em relaçao ao cenario"""
@@ -209,12 +219,14 @@ def main():
             if player.rect.right >= 1000:
                 diff = player.rect.right - 1000
                 player.rect.right = 1000
+                Enemy.rect.right -= diff 
                 current_level.shift_world(-diff)
   
         
             if player.rect.left <= 100:
                 diff = 100 - player.rect.left
                 player.rect.left = 100
+                Enemy.rect.left += diff
                 current_level.shift_world(diff)
  
         
@@ -228,8 +240,7 @@ def main():
 #==============================================================================
         """Desenha tudo o que aparece na tela"""
         current_level.draw(screen)
-        player_sprite_list.draw(screen)
-        enemy_sprite_list.draw(screen)
+        active_sprite_list.draw(screen)
         player.player_hud(screen)
         if Enemy.ml:
             Enemy.enemy_hud(screen)

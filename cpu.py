@@ -8,15 +8,16 @@ class CPU (pygame.sprite.Sprite):
 #==============================================================================
         """constantes de animaçao""" 
 #==============================================================================
-        self.delay_standby = self.delay_dmg= self.delay_dead = 0
+        self.delay_standby = self.delay_dmg= self.delay_dead = self.delay = 0
         self.delay_punch = self.delay_kick = 0
         self.i = self.p = self.k = self.h = self.d = self.r = 0
         self.count = 0
+        self.count_p = self.count_k = 0
         self.dano = 0
         self.Action = None
         self.Sub_Action = None
         self.Action_list = ["Chase","Dont"]
-        self.Sub_Action_list = ['Stop']#'Punch','Kick']
+        self.Sub_Action_list = ['Stop','Punch','Kick']
 #==============================================================================
         """Define o movimento do Enemy"""
 #==============================================================================
@@ -71,11 +72,13 @@ class CPU (pygame.sprite.Sprite):
 #==============================================================================
         """Estados:"""
 #==============================================================================
+        self.a = False
         self.live = True                                                        #Verifica se o enemy esta vivo 
         self.jump = False                                                       #Verifica se esta Pulando 
         self.ki_charge = False                                                  #Verifica se esta carregando o ki 
         self.dmg = False                                                        #Verifica se esta levando dano
         self.dealdmg = False
+        self.rec = False
         self.punch = False                                                      #Verifica se esta socando 
         self.kick = False                                                       #Verifica se esta chutanto
         self.SPC1_Atk = False                                                   #Verifica se esta dando o Especial 1
@@ -86,11 +89,13 @@ class CPU (pygame.sprite.Sprite):
 #============================================================================== 
         self.mask = None
 #==============================================================================
-    """Funcoes do  Enemy"""
+    """Funcoes do  Enemy:"""
 #==============================================================================
-    def update(self):
+    def update(self): #Faz a animaçao do Enemy
         pass
-    
+#==============================================================================
+        """Faz a Verificaçao do que é possivel o Enemy fazer"""
+#==============================================================================
     def State(self,event):    
         if event == 'wait':
             if self.live and not self.jump and not self.ki_charge and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
@@ -122,17 +127,10 @@ class CPU (pygame.sprite.Sprite):
         elif event == 'Ultimate':
             if self.live and not self.jump and not self.ki_charge and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk:
                 return True
-                
-    def boss_action(self): 
-        self.Action = random.choice(self.Action_list)
-        return self.Action
-    
-    def sub_action(self):
-        self.Sub_Action = random.choice(self.Sub_Action_list)
-        return self.Sub_Action
-        
-    def ai (self,player):
+#==============================================================================
+    """Inteligencia Artificial"""
 #============================================================================== 
+    def ai (self,player):
         if player.rect.centerx > self.rect.centerx:
             self.direction = "R"
         else:
@@ -153,17 +151,40 @@ class CPU (pygame.sprite.Sprite):
                     self.go_right()
             elif player.rect.left == self.rect.right or player.rect.right == self.rect.left:
                 self.stop()
-                if player.live and not self.dmg:
+                if self.dmg:
+                    self.rec = True
+                self.time_rec()
+                if player.live and not self.rec :
                     if self.Sub_Action == 'Punch':
                         if self.State('punch'):
-                            self.Soco_1()
+                            if self.count_p > 25:
+                                self.count_p = 0
+                                self.Soco_1()
+                            else:
+                                self.count_p += 1
                     if self.Sub_Action == 'Kick':
                         if self.State('kick'):
-                            self.Chute_1()
+                            if self.count_k > 25:
+                                self.count_k = 0
+                                self.Chute_1()
+                            else:
+                                self.count_k += 1
                     if self.Sub_Action == "Stop":
                         self.stop()
-        else:
+                        
+        if self.Action == "Dont":
+            
             self.stop()
+#==============================================================================
+# Funçoes Surporte da ai:           
+#==============================================================================
+    def boss_action(self): 
+        self.Action = random.choice(self.Action_list)
+        return self.Action
+    
+    def sub_action(self):
+        self.Sub_Action = random.choice(self.Sub_Action_list)
+        return self.Sub_Action
 #==============================================================================
 #        if player.rect.centerx > self.rect.centerx:
 #            self.direction = "R"
@@ -198,11 +219,11 @@ class CPU (pygame.sprite.Sprite):
 #                self.Muda_Rota_Inf()
         
        
-        
-            
-            
+#==============================================================================
+    """Mecanicas Gerais"""       
+#==============================================================================
     def calc_grav(self):
-        """ Calculate effect of gravity. """
+        """ Calcula o efeito da Gravidade """
         if self.change_y == 0:
             if self.onGround:
                 self.change_y = 0
@@ -217,6 +238,9 @@ class CPU (pygame.sprite.Sprite):
             self.change_y = 0
             self.rect.y = constants.SCREEN_HEIGHT - self.rect.height -self.Muda_Rota
             self.jump = False
+#==============================================================================
+    """Funcoes de Movimento """
+#==============================================================================
     def Jump(self):
         """ Called when user hits 'jump' button. """ 
         # move down a bit and see if there is a platform below us.
@@ -256,6 +280,9 @@ class CPU (pygame.sprite.Sprite):
             self.Rota_Seg -= 2
         else:
             self.Muda_Rota = 0
+#==============================================================================
+    """Mecanicas no Enemy"""
+#==============================================================================
 
     def stop(self):
         """ Called when the user lets off the keyboard. """
@@ -268,12 +295,20 @@ class CPU (pygame.sprite.Sprite):
         
     def Chute_1 (self):
         self.kick = True
+    
+    def time_rec(self):
+        if self.rec:
+            if self.delay > 10:
+                self.delay = 0
+                self.rec = False
+            else:
+                self.delay +=1
         
     def Recive_Dmg(self,player):
             if self.dmg:
                 self.ml = True
                 if player.Atk >self.Def :
-                    self.dano = 1 #0.5*(player.Atk - 0.79*self.Def * math.e **(-0.27*(self.Def/player.Atk)))
+                    self.dano = 0.5*(player.Atk - 0.79*self.Def * math.e **(-0.27*(self.Def/player.Atk)))
                     if self.dano < self.hp: 
                         self.hp = self.hp - self.dano 
                     else:
@@ -282,39 +317,23 @@ class CPU (pygame.sprite.Sprite):
                         
                 else:
                     self.ml = True
-                    self.dano = 1#0.5*(0.4*(player.Atk**3/self.Def**2)-0.09*(player.Atk**2/self.Def)+0.1*player.Atk)
+                    self.dano = 0.5*(0.4*(player.Atk**3/self.Def**2)-0.09*(player.Atk**2/self.Def)+0.1*player.Atk)
                     if self.dano < self.hp: 
                         self.hp = self.hp - self.dano 
                     else:
                         self.hp = 0
                         self.live = False
                                             
-    def Dead(self):
-        if not self.live:
-            if self.Lives > 0:
-                self.rect.y = 100
-                self.rect.x = 0
-                self.Lives -=1
-                self.hp = constants.Hp_Max
-                self.mp = constants.Mp_Max
-                self.live = True
-                self.jump= True
-                self.onGround = False
-                                 
-    def healt_regen(self):
-        if self.hp < constants.Hp_Max and not self.live:
-            self.hp +=0.01
-            
-    def Mp_regen(self):
-        if self.mp < constants.Mp_Max and not self.live:
-            self.mp += 0.1
-            
+                
+#==============================================================================
+    """Barra de Vida do enemy"""                                           
+#==============================================================================
     def enemy_hud(self, screen):
         
         self.Hp_Max_Porc = (constants.Hp_Max/constants.Hp_Max)*100
         self.Hp_Porc = (self.hp/constants.Hp_Max)*100
-        pygame.draw.rect(screen, constants.WHITE, (self.rect.left,self.rect.top - 12,0.75*self.Hp_Max_Porc+2, 12))#61, 104, 1.5*self.Hp_Max_Porc+2, 12)) 
-        pygame.draw.rect(screen, constants.GRAY, (self.rect.left +1,self.rect.top - 11,0.75*self.Hp_Max_Porc, 10))#62, 105, 1.5*self.Hp_Max_Porc, 10))
+        pygame.draw.rect(screen, constants.WHITE, (self.rect.left,self.rect.top - 12,0.75*self.Hp_Max_Porc+2, 12))
+        pygame.draw.rect(screen, constants.GRAY, (self.rect.left +1,self.rect.top - 11,0.75*self.Hp_Max_Porc, 10))
         if self.Hp_Porc >0:        
             pygame.draw.rect(screen, constants.RED, (self.rect.left +1,self.rect.top - 11,0.75*self.Hp_Porc, 10))
         else:

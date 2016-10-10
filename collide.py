@@ -1,7 +1,8 @@
 
 def check_colide(player,enemy):
     """checa a colisão de movimento entre o player e o inimigo"""
-    if player.State('move') or enemy.State('move'):
+
+    if enemy.live and (player.State('move') or enemy.State('move')):
         
         if player.rect.bottom < enemy.rect.bottom and player.rect.bottom > enemy.rect.top:
             if player.rect.left < enemy.rect.left and player.rect.right > enemy.rect.left:
@@ -20,7 +21,7 @@ def check_colide(player,enemy):
                 player.rect.left = enemy.rect.right
     if player.punch:
         if hit(player,enemy):
-            enemy.Recive_Dmg(player)
+            enemy.Recive_Dmg(player)    
     if enemy.punch:
         if hit(enemy,player):
             player.Recive_Dmg(enemy)

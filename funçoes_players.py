@@ -1,9 +1,5 @@
-import pygame
+import constants, Sounds
  
-import constants
- 
-from platforms import MovingPlatform
-from spritesheet_functions import *
 
 def Anima(self):
     while self.delay_standby > constants.FPS/10:
@@ -13,7 +9,7 @@ def Anima(self):
         else:
             self.image = self.Para_Frames_L[self.i]
         if self.i >= len(self.Para_Frames_R) - 1:
-            self.i = 0
+            self.i = 0  
         else:
             self.i += 1            
     self.delay_standby += 1
@@ -30,7 +26,7 @@ def Anima_Mov(self):
 def Anima_Golpes_Soco(self):
     if self.punch == True  and self.count == 0:
             self.change_x = 0
-            if self.delay_punch > constants.FPS/35:
+            if self.delay_punch > constants.FPS/45:
                 self.delay_punch = 0
                 if self.direction == "R":
                     self.image = self.Atk_P1_R[self.p]
@@ -64,6 +60,7 @@ def Anima_Golpes_Soco(self):
                     self.p += 1 
                 if self.p == 2:
                     self.dealdmg = True
+                    
                 else:
                     self.dealdmg = False
                                 
@@ -76,7 +73,7 @@ def Anima_Golpes_Soco(self):
         
 def Anima_Golpes_Chute(self):       #Chutes:
     if self.kick:
-        if self.delay_kick > constants.FPS/25:
+        if self.delay_kick > constants.FPS/35:
             self.delay_kick = 0
             if self.direction == "R":
                 self.image = self.Atk_K1_R[self.k]
@@ -136,6 +133,7 @@ def Anima_Dead(self):
                 if self.d >= len(self.Dead_R) - 1 :
                     self.d = 4
                     self.change_x = 0
+                    Sounds.Down.play
                     if self.Lives > 0 and self.i >= 15:
                         self.Dead()
                         self.d = 0
@@ -145,6 +143,18 @@ def Anima_Dead(self):
                 else:
                     self.d +=1
             else: self.delay_dead +=1
+            
+def Anima_vit(self):
+    if self.com:
+        if self.delay_vit > constants.FPS/10:
+            self.delay_vit = 0
+            self.image = self.Com_R[self.v]
+            if self.v >= len(self.Com_R)-1:
+                self.v = 7
+            else:
+                self.v += 1
+        else:
+            self.delay_vit +=1
             
 
 

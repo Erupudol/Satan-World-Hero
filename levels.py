@@ -1,8 +1,7 @@
 import pygame
 import platforms 
 import constants
-import Music_Sounds
-from hud import *
+import Sounds
 from enemy import*
 
 class Level():
@@ -10,7 +9,7 @@ class Level():
         Create a child class for each level with level-specific
         info. """
  
-    def __init__(self, player,enemy):
+    def __init__(self, player,enemy,boss):
         """ Constructor. Pass in a handle to player. Needed for when moving platforms
             collide with the player. """
  
@@ -29,6 +28,7 @@ class Level():
         self.enemy_list = pygame.sprite.Group()
         self.player = player
         self.enemy = enemy
+        self.boss = boss
  
     # Update everythign on this level
     def update(self):
@@ -67,14 +67,14 @@ class Level():
 class Level_01(Level):
     """ Definition for level 1. """
  
-    def __init__(self, player,enemy):
+    def __init__(self, player,enemy,boss):
         """ Create level 1. """
  
         # Call the parent constructor
-        Level.__init__(self, player,enemy)
+        Level.__init__(self, player,enemy,boss)
         
  
-        self.background = pygame.image.load("Fotos\Teste1.png").convert()
+        self.background = pygame.image.load("Fotos\map.png").convert()
         self.background=  pygame.transform.scale(self.background,(5500,700))
         self.background.set_colorkey(constants.WHITE)
         self.level_limit = -7000
@@ -112,19 +112,31 @@ class Level_01(Level):
         
 
 def Start_Screen():
+    
+    pygame.joystick.init()
+    if pygame.joystick.get_count() > 0:
+        joystick = pygame.joystick.Joystick(0)
+        joystick.init()    
+    
     pygame.mixer.music.load("Music\StartScreean.ogg")
     pygame.mixer.music.set_volume(0.6)
     pygame.mixer.music.play()
     
     
     background = pygame.image.load("Fotos\Start Screen.png").convert()
+    Title = constants.Get_Font(constants.SaiyanFont,72)
+    bit = constants.Get_Font(constants.BitFont,22)
+    game_title = Title.render("Satan World Hero", True, constants.WHITE, None)
     
-    game_title = constants.SaiyanFont.render("Satan World Hero", True, constants.WHITE, None)
-    press_start = constants.BitFont.render("Press ENTER", False, constants.WHITE)
-
+    if pygame.joystick.get_count() > 0:
+        press_start = bit.render("Press START", False, constants.WHITE)
+    else:
+        press_start = bit.render("Press ENTER", False, constants.WHITE)
+        
     instart = True
 
     while instart:
+        
         
         screen1 = pygame.display.set_mode((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT))
         screen1.blit(background, (0,0))
@@ -137,30 +149,46 @@ def Start_Screen():
         pygame.display.update()
         
         for event in pygame.event.get():
-            
-            pressed = pygame.key.get_pressed()
-            if event.type == pygame.QUIT:
-                pygame.quit() 
-            if event.type == pygame.KEYDOWN:
-                if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4])):
+            if pygame.joystick.get_count() > 0:
+                
+                if event.type == pygame.QUIT:
                     pygame.quit() 
-                    
-                elif pressed[pygame.K_RETURN]:
-                    pygame.mixer.music.stop()
-                    instart = False 
-                else:
-                    #ERRROU
-                    Music_Sounds.Errou.play()
-                    """pygame.mixer.music.load("Music\Fausto.mp3")
-                    pygame.mixer.music.play()"""
-                    pygame.display.update()
-                    pygame.event.wait()
+                if event.type == pygame.JOYBUTTONDOWN:
+                    if event.button == 9:
+                        pygame.mixer.music.stop()
+                        instart = False 
+                    else:
+                        #ERRROU
+                        Sounds.Errou.play()
+                        pygame.display.update()
+                        pygame.event.wait()
+            else:
+                pressed = pygame.key.get_pressed()
+                if event.type == pygame.QUIT:
+                    pygame.quit() 
+                if event.type == pygame.KEYDOWN:
+                    if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4])):
+                        pygame.quit() 
+                        
+                    elif pressed[pygame.K_RETURN]:
+                        pygame.mixer.music.stop()
+                        instart = False 
+                    else:
+                        #ERRROU
+                        Sounds.Errou.play()
+                        pygame.display.update()
+                        pygame.event.wait()
                     
         
 def Pause():
-    
+    pygame.joystick.init()
+    if pygame.joystick.get_count() > 0:
+        joystick = pygame.joystick.Joystick(0)
+        joystick.init()
+        
     background = pygame.image.load("Fotos\Start Screen.png").convert()
-    press_start = constants.BitFont.render("Pause", True, constants.WHITE, None)
+    start= constants.Get_Font(constants.BitFont,22)
+    press_start = start.render("Pause", True, constants.WHITE, None)
     
     instart = True
     
@@ -175,18 +203,19 @@ def Pause():
         
         
         for event in pygame.event.get():
-            
-            pressed = pygame.key.get_pressed()
-            if event.type == pygame.QUIT:
-                pygame.quit() 
-            if event.type == pygame.KEYDOWN:
-                if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4])):
+            if pygame.joystick.get_count() > 0:
+                
+                if event.type == pygame.QUIT:
                     pygame.quit() 
-                    
-                elif pressed[pygame.K_RETURN]:
+                if event.type == pygame.JOYBUTTONDOWN:
                     instart = False
-    
-
-
- 
- 
+            else:       
+                pressed = pygame.key.get_pressed()
+                if event.type == pygame.QUIT:
+                    pygame.quit() 
+                if event.type == pygame.KEYDOWN:
+                    if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4])):
+                        pygame.quit() 
+                        
+                    elif pressed[pygame.K_RETURN]:
+                        instart = False

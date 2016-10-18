@@ -1,4 +1,4 @@
-import constants
+import constants, Sounds
 
 
 def Anima(self):
@@ -118,6 +118,8 @@ def Anima_Dead(self):
                     self.d = 4
                 else:
                     self.d +=1
+                if self.d == 2:
+                    Sounds.Down.play()
             else: self.delay_dead +=1
             
 

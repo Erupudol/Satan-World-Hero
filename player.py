@@ -1,4 +1,4 @@
-import pygame
+import pygame, Sounds
  
 import constants
  
@@ -7,7 +7,7 @@ from spritesheet_functions import *
 from funçoes_players import *
 import math
 
-class player (pygame.sprite.Sprite):
+class Player (pygame.sprite.Sprite):
     def __init__(self):
         
         super().__init__()
@@ -15,8 +15,8 @@ class player (pygame.sprite.Sprite):
         """constantes de animaçao""" 
 #==============================================================================
         self.delay_standby = self.delay_dmg= self.delay_dead = 0
-        self.delay_punch = self.delay_kick = self.delay_def = 0
-        self.i = self.p = self.k = self.h = self.d = self.r = self.a = 0
+        self.delay_punch = self.delay_kick = self.delay_def = self.delay_vit = 0
+        self.i = self.p = self.k = self.h = self.d = self.r = self.a = self.v = 0
         self.count = 0
         self.dano = 0
 #==============================================================================
@@ -67,9 +67,13 @@ class player (pygame.sprite.Sprite):
         """Chute com Dash"""
         self.Atk_DK_R = [] 
         self.Atk_DK_L = []     
+        """Clear Stage"""
+        self.Com_R = []
+        self.Com_L = []
+        
         
         # What direction is the player facing?
-        self.Lives = 2
+        self.Lives = 0
         self.direction = "R"                 
         self.level = None
         """Estados"""
@@ -85,6 +89,7 @@ class player (pygame.sprite.Sprite):
         self.SPC2_Atk = False
         self.SPC3_Atk = False
         self.Ult_Atk = False
+        self.com = False
        
         
         
@@ -96,37 +101,37 @@ class player (pygame.sprite.Sprite):
     
     def State(self,event):    
         if event == 'wait':
-            if self.live and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
+            if self.live and not self.com and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
                 return True
         elif event == 'move':
-            if self.live and not self.ki_charge and not self.defending and not self.dmg and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
+            if self.live and not self.com and not self.ki_charge and not self.defending and not self.dmg and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
                 return True
         elif event == 'jump':
-            if self.live and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
+            if self.live and not self.com and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
                 return True
         elif event == 'ki_charge':
-            if self.live and not self.jump and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
+            if self.live and not self.com and not self.jump and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
                 return True
         elif event == 'defending':
-            if self.live and not self.jump and not self.ki_charge and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
+            if self.live and not self.com and not self.jump and not self.ki_charge and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
                 return True
         elif event == 'punch':
-            if self.live and not self.jump and not self.ki_charge and not self.defending and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
+            if self.live and not self.com and not self.jump and not self.ki_charge and not self.defending and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
                 return True
         elif event == 'kick':
-            if self.live and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
+            if self.live and not self.com and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
                 return True
         elif event == 'Special_1':
-            if self.live and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
+            if self.live and not self.com and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC2_Atk and not self.SPC3_Atk and not self.Ult_Atk:
                 return True
         elif event == 'Special_2':
-            if self.live and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC3_Atk and not self.Ult_Atk:
+            if self.live and not self.com and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC3_Atk and not self.Ult_Atk:
                 return True
         elif event == 'Special_3':
-            if self.live and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.Ult_Atk:
+            if self.live and not self.com and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.Ult_Atk:
                 return True
         elif event == 'Ultimate':
-            if self.live and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk:
+            if self.live and not self.com and not self.jump and not self.ki_charge and not self.defending and not self.punch and not self.kick and not self.SPC1_Atk and not self.SPC2_Atk and not self.SPC3_Atk:
                 return True
                    
     def calc_grav(self):
@@ -193,9 +198,11 @@ class player (pygame.sprite.Sprite):
         
     def Soco_1 (self):
         self.punch = True
+        Sounds.Punch.play()
         
     def Chute_1 (self):
         self.kick = True
+        Sounds.kick.play()
         
     def Recive_Dmg(self,enemy):
         if self.defending:
@@ -249,6 +256,8 @@ class player (pygame.sprite.Sprite):
                 self.live = True
                 self.jump= True
                 self.onGround = False
+    def Vitoria(self):
+        self.com = True
             
     def Defesa(self):
         self.defending = True     
@@ -261,14 +270,9 @@ class player (pygame.sprite.Sprite):
         if self.live:
             if self.mp < constants.Mp_Max and not self.live:
                 self.mp += 0.1
-            
-    
-    
-            
-    
-    
-    
-
+#==============================================================================
+#Hud Do player:
+#==============================================================================
     def player_hud(self, screen):
         
         self.Hp_Max_Porc = (constants.Hp_Max/constants.Hp_Max)*100
@@ -299,3 +303,70 @@ class player (pygame.sprite.Sprite):
         pygame.draw.rect(screen, constants.WHITE, (61, 117, (1.5*self.Mp_Max_Porc)+2, 12))
         pygame.draw.rect(screen, constants.GRAY, (62, 118, 1.5*self.Mp_Max_Porc, 10))
         pygame.draw.rect(screen, constants.BLUE, (62, 118, 1.5*self.Mp_Porc, 10))
+        
+#==============================================================================
+# Tela de Morte Player        
+#==============================================================================
+def dead_screen(screen):
+    if constants.regrecive > 0:
+        black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
+        black_surf.fill((0, 0, 0, 180))
+        screen.blit(black_surf, (0, 0))
+    #==============================================================================
+        #Carre as Fontes    
+    #==============================================================================
+        pre_game_over = constants.Get_Font(constants.SaiyanFont,72)        
+        Continue = constants.Get_Font(constants.BitFont, 22)
+        Cont = constants.Get_Font(constants.BitFont,200)
+        you_died_txt = pre_game_over.render("Meu Estomago Doi", True, constants.WHITE, None)
+        continue_txt = Continue.render("Continue?", True, constants.WHITE, None)
+    #==============================================================================
+        #Carrega Es informaçoes:
+    #==============================================================================
+        black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
+        black_surf.fill((0, 0, 0, 180))
+        screen.blit(black_surf, (0, 0))
+        you_died_rect = you_died_txt.get_rect()
+        you_died_rect.center = ((constants.SCREEN_WIDTH/2),(constants.SCREEN_HEIGHT/5-100))
+        screen.blit(you_died_txt, you_died_rect)
+        continue_rect = you_died_txt.get_rect()
+        continue_rect.center = ((100+constants.SCREEN_WIDTH/2),(constants.SCREEN_HEIGHT/5))
+        screen.blit(continue_txt, continue_rect)    
+        cont_txt = Cont.render(str(constants.regrecive),True,constants.WHITE,None)
+        cont_txt_rect = cont_txt.get_rect()
+        cont_txt_rect.center = ((constants.SCREEN_WIDTH/2),(constants.SCREEN_HEIGHT/2))
+        screen.blit (cont_txt,cont_txt_rect)
+        if constants.delays > 60:
+            constants.delays = 0
+            constants.regrecive -= 1
+        else:
+            constants.delays += 1 
+    
+        for event in pygame.event.get():
+                pressed = pygame.key.get_pressed()
+                if event.type == pygame.QUIT:
+                    pygame.quit() # Fecha a janela se o usuário clicar em fechar
+                    quit()
+                if event.type == pygame.KEYDOWN:
+                    if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
+                        pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
+                        quit()    
+    else:
+        black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
+        black_surf.fill((0, 0, 0, 255))
+        screen.blit(black_surf, (0, 0))
+        game_over = constants.Get_Font(constants.SaiyanFont,90)
+        Game_over = game_over.render("Game Over",True,constants.WHITE,None)
+        Game_over_Rect = Game_over.get_rect()
+        Game_over_Rect.center = ((constants.SCREEN_WIDTH/2),(constants.SCREEN_HEIGHT/2))
+        screen.blit(Game_over, Game_over_Rect)
+        for event in pygame.event.get():
+                pressed = pygame.key.get_pressed()
+                if event.type == pygame.QUIT:
+                    pygame.quit() # Fecha a janela se o usuário clicar em fechar
+                    quit()
+                if event.type == pygame.KEYDOWN:
+                    if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])) or pygame.K_RETURN:
+                        pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
+                        quit() 
+        

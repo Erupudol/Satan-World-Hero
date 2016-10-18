@@ -40,7 +40,7 @@ Def = 0 # defesa do Jogador
 Crit_Rate = 0 # Chance de Critico 
 Crit_Dmg = 0 # Multiplicador de Dano Critico 
 Esq = 0   # Chance de esquiva     
-        
+regrecive = 10        
 """Atributos:"""
 Vit = 0 #Aumenta o Hp Max
 Int = 0 #Aumenta o Mp Max 
@@ -55,6 +55,7 @@ def Get_Font(Nome_Font,Size):
     font = pg.font.Font(Nome_Font,Size)
     return font
     
-SaiyanFont = Get_Font("font\SaiyanSans.ttf",72)
-BitFont = pg.font.Font("font\8-BIT WONDER.TTF",22)
-SFon = pg.font.Font("font\SaiyanSans.ttf",12)
+SaiyanFont = "font\SaiyanSans.ttf"
+BitFont = "font\8-BIT WONDER.TTF"
+
+

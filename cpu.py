@@ -1,10 +1,19 @@
-import pygame, constants, math, random
+import pygame, constants, math, random, Sounds
 
 class CPU (pygame.sprite.Sprite):
     def __init__(self):
         
         super().__init__()
         # Stats:
+#==============================================================================
+#        Status: 
+#==============================================================================
+        self.Hp_Max = 0
+        self.hp = self.Hp_Max
+        self.Mp_Max = 0
+        self.mp = self.Mp_Max
+        self.Atk = 0
+        self.Def = 0
 #==============================================================================
         """constantes de animaçao""" 
 #==============================================================================
@@ -14,6 +23,7 @@ class CPU (pygame.sprite.Sprite):
         self.count = 0
         self.count_p = self.count_k = 0
         self.dano = 0
+        self.nome = None
         self.Action = None
         self.Sub_Action = None
         self.Action_list = ["Chase","Dont"]
@@ -132,50 +142,57 @@ class CPU (pygame.sprite.Sprite):
 #============================================================================== 
     def ai (self,player):
         if self.live:
-            if player.rect.centerx > self.rect.centerx:
-                self.direction = "R"
+            if player.rect.left > self.rect.right + 250 or player.rect.right < self.rect.left -250:
+                self.stop()
             else:
-                self.direction = "L" 
-                
-            if self.Action == "Chase":
-                if player.rect.bottom < self.rect.bottom and not player.jump:
-                    if self.State('move'):
-                        self.Muda_Rota_Sup()
-                if player.rect.bottom > self.rect.bottom and not player.jump :
-                    if self.State('move'):
-                        self.Muda_Rota_Inf()
-                if player.rect.centerx + 100 < self.rect.left:
-                    if self.State('move'):
-                        self.go_left()
-                if player.rect.centerx - 100 > self.rect.right:
-                    if self.State('move'):
-                        self.go_right()
-                elif player.rect.left == self.rect.right or player.rect.right == self.rect.left:
+                if player.rect.centerx > self.rect.centerx:
+                    self.direction = "R"
+                else:
+                    self.direction = "L" 
+                    
+                if self.Action == "Chase":
+                    if player.rect.bottom < self.rect.bottom and not player.jump:
+                        if self.State('move'):
+                            self.Muda_Rota_Sup()
+                    if player.rect.bottom > self.rect.bottom and not player.jump :
+                        if self.State('move'):
+                            self.Muda_Rota_Inf()
+                    if player.rect.centerx + 100 < self.rect.left:
+                        if self.State('move'):
+                            self.go_left()
+                    if player.rect.centerx - 100 > self.rect.right:
+                        if self.State('move'):
+                            self.go_right()
+                    elif player.rect.left == self.rect.right or player.rect.right == self.rect.left:
+                        self.stop()
+                        if self.dmg:
+                            self.rec = True
+                        self.time_rec()
+                        if player.live and not self.rec :
+                            if self.Sub_Action == 'Punch':
+                                if self.State('punch'):
+                                    if self.count_p > 25:
+                                        self.count_p = 0
+                                        self.Soco_1()
+                                    else:
+                                        self.count_p += 1
+                            if self.Sub_Action == 'Kick':
+                                if self.State('kick'):
+                                    if self.count_k > 25:
+                                        self.count_k = 0
+                                        self.Chute_1()
+                                    else:
+                                        self.count_k += 1
+                            if self.Sub_Action == "Stop":
+                                self.stop()
+                                
+                if self.Action == "Dont":
                     self.stop()
                     if self.dmg:
-                        self.rec = True
+                            self.rec = True
                     self.time_rec()
-                    if player.live and not self.rec :
-                        if self.Sub_Action == 'Punch':
-                            if self.State('punch'):
-                                if self.count_p > 25:
-                                    self.count_p = 0
-                                    self.Soco_1()
-                                else:
-                                    self.count_p += 1
-                        if self.Sub_Action == 'Kick':
-                            if self.State('kick'):
-                                if self.count_k > 25:
-                                    self.count_k = 0
-                                    self.Chute_1()
-                                else:
-                                    self.count_k += 1
-                        if self.Sub_Action == "Stop":
-                            self.stop()
-                            
-            if self.Action == "Dont":
-                if self.State('jump'):
-                    self.Jump()
+                    if self.State('jump') and not self.rec:
+                        self.Jump()
 #==============================================================================
 # Funçoes Surporte da ai:           
 #==============================================================================
@@ -293,9 +310,11 @@ class CPU (pygame.sprite.Sprite):
         
     def Soco_1 (self):
         self.punch = True
+        Sounds.Punch.play()
         
     def Chute_1 (self):
         self.kick = True
+        Sounds.kick.play()
     
     def time_rec(self):
         if self.rec:
@@ -330,15 +349,47 @@ class CPU (pygame.sprite.Sprite):
     """Barra de Vida do enemy"""                                           
 #==============================================================================
     def enemy_hud(self, screen):
-        
-        self.Hp_Max_Porc = (constants.Hp_Max/constants.Hp_Max)*100
-        self.Hp_Porc = (self.hp/constants.Hp_Max)*100
-        pygame.draw.rect(screen, constants.WHITE, (self.rect.left,self.rect.top - 12,0.75*self.Hp_Max_Porc+2, 12))
-        pygame.draw.rect(screen, constants.GRAY, (self.rect.left +1,self.rect.top - 11,0.75*self.Hp_Max_Porc, 10))
-        if self.Hp_Porc >0:        
-            pygame.draw.rect(screen, constants.RED, (self.rect.left +1,self.rect.top - 11,0.75*self.Hp_Porc, 10))
-        else:
+        if self.live:
+            self.Hp_Max_Porc = (self.Hp_Max/self.Hp_Max)*100
+            self.Hp_Porc = (self.hp/self.Hp_Max)*100
+            pygame.draw.rect(screen, constants.WHITE, (self.rect.left,self.rect.top - 12,0.75*self.Hp_Max_Porc+2, 12))
             pygame.draw.rect(screen, constants.GRAY, (self.rect.left +1,self.rect.top - 11,0.75*self.Hp_Max_Porc, 10))
+            if self.Hp_Porc >0:        
+                pygame.draw.rect(screen, constants.RED, (self.rect.left +1,self.rect.top - 11,0.75*self.Hp_Porc, 10))
+            else:
+                pygame.draw.rect(screen, constants.GRAY, (self.rect.left +1,self.rect.top - 11,0.75*self.Hp_Max_Porc, 10))
+                
+    def boss_hud(self,screen):
+        if self.live:
+            self.boss_name = self.nome
+            self.Hp_Max_Porc = (self.Hp_Max/self.Hp_Max)*100
+            self.Hp_Porc = (self.hp/self.Hp_Max)*100
+            
+            
+        
+            nome  = constants.Get_Font("font\8-BIT WONDER.TTF", 10)
+            
+            nome = nome.render(self.boss_name, True, constants.WHITE, None)
+            nome_Rect = nome.get_rect()
+            nome_Rect.x ,nome_Rect.y = 1000,104 
+            
+           
+#            pygame.draw.rect(screen, constants.WHITE,(0,60,60,69))
+#            pygame.draw.rect(screen, constants.BGREEN,(1,61,58,67))
+#            screen.blit(self.Face, (1,60))
+            pygame.draw.rect(screen, constants.WHITE, (951, 117, (2*self.Hp_Max_Porc)+2, 12))
+            pygame.draw.rect(screen, constants.GRAY, (952, 118, 2*self.Hp_Max_Porc, 10))
+            if self.Hp_Porc > 0.75*self.Hp_Max_Porc:
+                pygame.draw.rect(screen, constants.GREEN, (952, 118, 2*self.Hp_Max_Porc, 10))
+                pygame.draw.rect(screen, constants.BLUE, (952, 118, 2*self.Hp_Porc, 10))
+            if 0.5*self.Hp_Max_Porc < self.Hp_Porc <= .75*self.Hp_Max_Porc:
+                pygame.draw.rect(screen, constants.YELLOW, (952, 118, 2*self.Hp_Max_Porc, 10))
+                pygame.draw.rect(screen, constants.GREEN, (952, 118, 2*self.Hp_Porc, 10))
+            if 0.25*self.Hp_Max_Porc < self.Hp_Porc <= .5*self.Hp_Max_Porc:
+                pygame.draw.rect(screen, constants.RED, (952, 118, 2*self.Hp_Max_Porc, 10))
+                pygame.draw.rect(screen, constants.YELLOW, (952, 118, 2*self.Hp_Porc, 10))
+            if 0.25*self.Hp_Max_Porc >= self.Hp_Porc:
+                pygame.draw.rect(screen, constants.RED, (952, 118, 2*self.Hp_Porc, 10))
         
     
     

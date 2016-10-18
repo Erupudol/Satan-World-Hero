@@ -1,3 +1,4 @@
+import Sounds
 
 def check_colide(player,enemy):
     """checa a colisão de movimento entre o player e o inimigo"""
@@ -19,18 +20,16 @@ def check_colide(player,enemy):
                 player.rect.right = enemy.rect.left
             if player.rect.right > enemy.rect.right and player.rect.left < enemy.rect.right:
                 player.rect.left = enemy.rect.right
-    if player.punch:
-        if hit(player,enemy):
-            enemy.Recive_Dmg(player)    
-    if enemy.punch:
-        if hit(enemy,player):
-            player.Recive_Dmg(enemy)
-    if player.kick:
+    if (player.punch or player.kick) and enemy.live:
         if hit(player,enemy):
             enemy.Recive_Dmg(player)
-    if enemy.kick:
+            if not enemy.live:
+                Sounds.Hit_kill.play()           
+    if (enemy.punch or enemy.kick) and player.live:
         if hit(enemy,player):
             player.Recive_Dmg(enemy)
+            if not player.live:
+                Sounds.Hit_kill.play()   
     
 def hit_box(Hit1, Hit2):
     hitbox = Hit1.rect.inflate(20,0)

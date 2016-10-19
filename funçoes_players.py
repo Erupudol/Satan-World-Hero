@@ -134,12 +134,12 @@ def Anima_Dead(self):
                     self.d = 4
                     self.change_x = 0
                     Sounds.Down.play
-                    if self.Lives > 0 and self.i >= 15:
+                    if self.Lives > 0 and self.c >= 15:
                         self.Dead()
                         self.d = 0
-                        self.i = 0
+                        self.c = 0
                     else:
-                        self.i += 1
+                        self.c += 1
                 else:
                     self.d +=1
             else: self.delay_dead +=1

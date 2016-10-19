@@ -44,7 +44,7 @@ class Level():
         # We don't shift the background as much as the sprites are shifted
         # to give a feeling of depth.
         screen.fill(constants.BLUE)
-        screen.blit(self.background,(self.world_shift // 3,0))
+        screen.blit(self.background,(self.world_shift,0))
         # Draw all the sprite lists that we have
         self.platform_list.draw(screen)
         self.enemy_list.draw(screen)

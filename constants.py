@@ -21,6 +21,7 @@ SCREEN_WIDTH  = 1150
 SCREEN_HEIGHT = 700
 #Gerais:
 Game_loop = False
+Game_over = False
 FPS = 60
 i = 0
 s = 0

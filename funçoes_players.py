@@ -105,7 +105,7 @@ def Anima_Def(self):
                     self.a +=1
             else: self.delay_def +=1
 def Anima_Dmg(self):
-    if self.dmg and self.live:
+    if self.dmg and self.live and not self.defending:
             if self.delay_dmg > constants.FPS/30:
                 self.delay_dmg = 0
                 if self.direction == "R":
@@ -122,6 +122,7 @@ def Anima_Dmg(self):
             
 def Anima_Dead(self):
      if not self.live:
+            self.defending =  False
             if self.delay_dead > constants.FPS/10:
                 self.delay_dead = 0
                 if self.direction == "R":

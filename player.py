@@ -177,18 +177,20 @@ class Player (pygame.sprite.Sprite):
         self.direction = "R"
         
     def Muda_Rota_Sup(self):
-        if self.Rota_Seg < 100:
-            self.Muda_Rota += 2
-            self.Rota_Seg += 2
-        else:
-            self.Muda_Rota = 100
+        if not self.com:
+            if self.Rota_Seg < 100:
+                self.Muda_Rota += 2
+                self.Rota_Seg += 2
+            else:
+                self.Muda_Rota = 100
             
     def Muda_Rota_Inf(self):
-        if self.Rota_Seg >  0:
-            self.Muda_Rota -= 2
-            self.Rota_Seg -= 2
-        else:
-            self.Muda_Rota = 0
+        if not self.com:
+            if self.Rota_Seg >  0:
+                self.Muda_Rota -= 2
+                self.Rota_Seg -= 2
+            else:
+                self.Muda_Rota = 0
 
     def stop(self):
         """ Called when the user lets off the keyboard. """
@@ -198,11 +200,11 @@ class Player (pygame.sprite.Sprite):
         
     def Soco_1 (self):
         self.punch = True
-        Sounds.Punch.play()
+#        Sounds.Punch.play()
         
     def Chute_1 (self):
         self.kick = True
-        Sounds.kick.play()
+#        Sounds.kick.play()
         
     def Recive_Dmg(self,enemy):
         if self.defending:
@@ -307,7 +309,7 @@ class Player (pygame.sprite.Sprite):
 #==============================================================================
 # Tela de Morte Player        
 #==============================================================================
-def dead_screen(screen,enemy_l,boss_list,enemy_list,bac_enemy_l,bac_boss,bac_enemy,player):
+def dead_screen(screen,player):
     if constants.regrecive > 0:
         black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
         black_surf.fill((0, 0, 0, 180))
@@ -349,9 +351,7 @@ def dead_screen(screen,enemy_l,boss_list,enemy_list,bac_enemy_l,bac_boss,bac_ene
                     quit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
-                        enemy_l = bac_enemy_l
-                      #  enemy_list = bac_enemy
-                        boss_list = bac_boss
+                        constants.regrecive = 10
                         player.live = True
                         player.hp = constants.Hp_Max
                         player.rect.x = 200
@@ -359,6 +359,7 @@ def dead_screen(screen,enemy_l,boss_list,enemy_list,bac_enemy_l,bac_boss,bac_ene
                         player.rect.y = constants.SCREEN_HEIGHT - player.rect.height - player.Muda_Rota 
                         player.dmg = False
                         player.jump = False
+                        constants.reset = True
                         
                         
                             
@@ -385,5 +386,4 @@ def dead_screen(screen,enemy_l,boss_list,enemy_list,bac_enemy_l,bac_boss,bac_ene
                     if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])) or pygame.K_RETURN:
                         pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
                         quit() 
-    return enemy_list
         

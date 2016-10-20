@@ -24,7 +24,9 @@ def check_colide(player,enemy):
         if hit(player,enemy):
             enemy.Recive_Dmg(player)
             if not enemy.live:
-                Sounds.Hit_kill.play()           
+                Sounds.Hit_kill.play()
+            else:
+                Sounds.Punch.play()
     if (enemy.punch or enemy.kick) and player.live:
         if hit(enemy,player):
             player.Recive_Dmg(enemy)

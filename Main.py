@@ -80,7 +80,7 @@ def main():
         Enemy.rect.y = inimigo[2] - Enemy.rect.height - Enemy.Muda_Rota
         level_list.append(levels.Level_01(player1,Enemy,boss1))
         enemy_l.append(Enemy)
-        backup_enemy_l.append(Enemy)
+    backup_enemy_l = enemy_l[:]
         
 #==============================================================================
     """Iniciaiza o Joystick"""
@@ -97,8 +97,7 @@ def main():
 # Cria as listas de Sprites 
 #==============================================================================
     player1_list = pg.sprite.Group()
-    enemy_list = pg.sprite.Group() 
-    backup_enemy = pg.sprite.Group() 
+    enemy_list = pg.sprite.Group()  
     boss_list = pg.sprite.Group()
 #==============================================================================
 # Define a Posiçao inicial    
@@ -114,12 +113,12 @@ def main():
     boss1.rect.x = constants.SCREEN_WIDTH+100
     boss1.rect.y = constants.SCREEN_HEIGHT - boss1.rect.height - player1.Muda_Rota 
     boss_list.add(boss1)
-    backup_boss = boss_list
+    backup_boss = boss_list.copy()
     """Enemy"""
     for Enemy in enemy_l:
         Enemy.level = current_level
         enemy_list.add(Enemy)
-        backup_enemy.add(Enemy)
+    backup_enemy = enemy_list.copy()
 #==============================================================================
     # Used to manage how fast the screen updates
     clock = pg.time.Clock()
@@ -182,11 +181,7 @@ def main():
                 if event.key == pg.K_RETURN:
                     if not  player1.com:
                         levels.Pause()
-                    else:
-                        if current_level_no < len(level_list)-1:
-                            current_level_no += 1
-                            current_level = level_list[current_level_no]
-                            player.level = current_level
+                    
                                     
                    
  
@@ -332,6 +327,14 @@ def main():
             collide.check_colide(player1,boss1)
             boss1.ai(player1)
         
+        if constants.reset:
+            enemy_l = backup_enemy_l[:]
+            enemy_list.remove()
+            enemy_list = backup_enemy.copy()
+            boss_list.remove()
+            boss_list = backup_boss.copy()
+            constants.reset = False
+
         player1_list.update()
         enemy_list.update()
         if len(enemy_list)<10:
@@ -371,7 +374,7 @@ def main():
         player1.player_hud(screen)
         
         if not player1.live and player1.Lives == 0:
-           enemy_list = player.dead_screen(screen,enemy_l,boss_list,enemy_list,backup_enemy_l,backup_boss,backup_enemy,player1)
+            player.dead_screen(screen,player1)
             
             
         for Enemy in enemy_l:

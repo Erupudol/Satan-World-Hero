@@ -191,8 +191,8 @@ class CPU (pygame.sprite.Sprite):
                     if self.dmg:
                             self.rec = True
                     self.time_rec()
-                    if self.State('jump') and not self.rec:
-                        self.Jump()
+#                    if self.State('jump') and not self.rec:
+#                        self.Jump()
 #==============================================================================
 # Funçoes Surporte da ai:           
 #==============================================================================

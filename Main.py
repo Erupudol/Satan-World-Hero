@@ -1,8 +1,7 @@
 import pygame as pg
 import os 
 import constants, enemy, personagens, collide, random , player
-import levels
-from pygame.locals import *
+import levels , pygame.locals 
 
  
 def main():
@@ -31,43 +30,44 @@ def main():
 #==============================================================================
 #    Enemys
 #==============================================================================
-    enemys_list =[[enemy.Cell_Jr(),0,constants.SCREEN_HEIGHT, 0],
-[enemy.Cell_Jr(),-100,constants.SCREEN_HEIGHT-500, 0],
-[enemy.Cell_Jr(),constants.SCREEN_WIDTH,constants.SCREEN_HEIGHT-40, 0],
-[enemy.Cell_Jr(),constants.SCREEN_WIDTH-50,constants.SCREEN_HEIGHT-70, 0],
-[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-90, 0], 
-[enemy.Cell_Jr(),constants.SCREEN_WIDTH+100,constants.SCREEN_HEIGHT, 0],
-[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-500, 0],
-[enemy.Cell_Jr(),constants.SCREEN_WIDTH+100,constants.SCREEN_HEIGHT-500, 0],
-[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-500, 0],
-[enemy.Cell_Jr(),constants.SCREEN_WIDTH+100,constants.SCREEN_HEIGHT-500, 0],
-[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-500, 0], 
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+100,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+100,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+100,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-500, 0], 
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+100,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+100,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+100,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-500, 0], 
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+100,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+100,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+100,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-500, 0], 
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+100,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+100,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+100,constants.SCREEN_HEIGHT-500, 0],
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-500, 0], 
-#[enemy.Cell_Jr(),constants.SCREEN_WIDTH+100,constants.SCREEN_HEIGHT-500, 0],
-[enemy.Cell_Jr(),constants.SCREEN_WIDTH+10,constants.SCREEN_HEIGHT-500, 0]]       
+    enemys_list =[[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))], 
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))], 
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))], 
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))], 
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))], 
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))], 
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))],
+[enemy.Cell_Jr(),random.choice(range(-200,2400)),constants.SCREEN_HEIGHT, random.choice(range(0,100))]] 
+    backup_enemys_list = enemys_list[:]      
     level_list = []
     enemy_l=[]
     backup_enemy_l = []
@@ -104,7 +104,7 @@ def main():
 #==============================================================================
     """Player"""
     player1.level = current_level
-    player1.rect.x = 200
+    player1.rect.x = -200
     player1.Muda_Rota = 20
     player1.rect.y = constants.SCREEN_HEIGHT - player1.rect.height - player1.Muda_Rota 
     player1_list.add(player1)
@@ -122,20 +122,23 @@ def main():
 #==============================================================================
     # Used to manage how fast the screen updates
     clock = pg.time.Clock()
-    Regen = USEREVENT + 1 
-    Boss_Action = USEREVENT + 2
-    Boss_Sub_Action = USEREVENT + 3
+    Regen = pygame.USEREVENT + 1 
+    Boss_Action = pygame.USEREVENT + 2
+    Boss_Sub_Action = pygame.USEREVENT + 3
     pg.time.set_timer(Regen,50)
     pg.time.set_timer(Boss_Action,1000)
     pg.time.set_timer(Boss_Sub_Action,500)
-    pg.time.set_timer(USEREVENT + 4,5000)
+    pg.time.set_timer(pygame.USEREVENT + 4,5000)
     levels.Start_Screen()
+    
+    levels.Music_play(0)
 #==============================================================================
     """Main Loop"""
     while not constants.Game_loop:
 #==============================================================================
         #==============================================================================
         """Joystck Configuration"""
+        #==============================================================================
         # Recebe valor real entre (-1) e (1) para o analógico esquerdo no eixo horizontal, onde (0) é parado
         if pg.joystick.get_count() >0:
             axis_lh = joystick.get_axis(0)
@@ -145,6 +148,8 @@ def main():
             # Recebe valor inteiro de (-1) e (1) para os botões direcionais, onde (0) é parado
             hat = joystick.get_hat(0)
         #==============================================================================
+#==============================================================================
+#      Comfiguraçoes teclado:       
 #==============================================================================
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -158,33 +163,28 @@ def main():
             if pressed[pg.K_DOWN]: player1.Muda_Rota_Inf()
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_LEFT:
-                    if player1.State('move'):
+                    if player1.State('move') and not constants.game_start:
                         player1.go_left()
                 if event.key == pg.K_RIGHT:
-                    if player1.State('move'):
+                    if player1.State('move') and not constants.game_start:
                         player1.go_right()
                 if event.key == pg.K_z:
-                    if player1.State('punch'):
+                    if player1.State('punch') and not constants.game_start:
                         player1.Soco_1()
                 if event.key == pg.K_x:
-                    if player1.State('kick'):
+                    if player1.State('kick') and not constants.game_start:
                         player1.Chute_1()
                 if event.key == pg.K_c:
-                    if player1.State('jump'):
+                    if player1.State('jump') and not constants.game_start:
                         player1.Jump()
                 if event.key == pg.K_v:
-                     if player1.State('defending'):
-                        player1.Defesa()
-                    
-#                if event.key == pg.K_b:
-#                    player1.Recive_Dmg()
+                     if player1.State('defending') and not constants.game_start:
+                        player1.Defesa()                    
                 if event.key == pg.K_RETURN:
-                    if not  player1.com:
+                    if not  player1.com and not constants.reset:
+                        pygame.mixer.music.pause()
                         levels.Pause()
                     
-                                    
-                   
- 
             if event.type == pg.KEYUP:
                 if event.key == pg.K_LEFT and player1.change_x < 0:
                     player1.stop()
@@ -201,18 +201,11 @@ def main():
 #==============================================================================
             for Enemy in enemy_l:
                 
-                if event.type == USEREVENT + 4:
+                if event.type == pygame.USEREVENT + 4:
                     Enemy.ml = False
                     
                 if event.type == Boss_Action:
                     Enemy.boss_action()
-#                    print (clock)
-#                    print(enemy_list.has(boss1))
-#                    print(boss_list)
-                  #  print(backup_boss)
-                  # print(backup_enemy)
-                   # print(backup_enemy_l)
-#                    print("Numero de Enemys:" + str(len(enemy_list)))
                     
                 if event.type == Boss_Sub_Action:
                     Enemy.sub_action()
@@ -220,25 +213,15 @@ def main():
                 if not Enemy.live:
                     if constants.delay_dead > 85:
                         constants.delay_dead =  0
-                        print(backup_enemy)
                         enemy_list.remove(Enemy)
                         enemy_l.remove(Enemy)
-                        for Enemy in backup_enemy_l:
-                            print(Enemy.live)
                     else:
                         constants.delay_dead += 1
 #==============================================================================
 #           Boss:
 #==============================================================================
-            if event.type == USEREVENT + 4:
-                    boss1.ml = False
-                                
             if event.type == Boss_Action:
                 boss1.boss_action()
-#                print (clock)
-#                print(enemy_list.has(boss1))
-#                print(boss_list)
-#                print("Numero de Enemys:" + str(len(enemy_list)))
                 
             if event.type == Boss_Sub_Action:
                 boss1.sub_action()
@@ -253,21 +236,22 @@ def main():
 #==============================================================================
         #==============================================================================
             """Configuraçoes dos botoes do controle"""
+        #==============================================================================
             if pg.joystick.get_count()>0:
                     # Direcional ou  Analógico esquerdo para a esquerda
                     if (hat == ((-1,0) or (-1,1) or (-1,-1))) or axis_lh <= -0.5:
-                        if player1.State('move'):
+                        if player1.State('move') and not constants.game_start:
                             player1.go_left()
                     # Direcional ou  Analógico esquerdo para a direita
                     if (hat == ((1,0) or (1,1) or (1,-1))) or axis_lh >= 0.5:
-                        if player1.State('move'):
+                        if player1.State('move') and not constants.game_start:
                             player1.go_right()
                             
                     if (hat == ((0,1) or (1,1) or (-1,1))) or axis_lv <= -0.5:
-                        if player1.State('move'):
+                        if player1.State('move') and not constants.game_start:
                             player1.Muda_Rota_Sup()
                     if (hat == ((0,-1) or (1,-1) or (-1,-1))) or axis_lv >= 0.5:
-                        if player1.State('move'):
+                        if player1.State('move') and not constants.game_start:
                             player1.Muda_Rota_Inf()
                      # Direcional ou  Analógico esquerdo parados   
                     if (hat == ((0,0) or (0,1) or (0,-1)) and (-0.5 < axis_lh < 0.5)) and (player1.change_x != 0):       
@@ -275,30 +259,30 @@ def main():
                         
                     if event.type == pg.JOYBUTTONDOWN:
                         if event.button == 2: # Botão X pressionado
-                            if player1.State('jump'):
+                            if player1.State('jump') and not constants.game_start:
                                 player1.Jump()
                             
                         if event.button == 1: # Botão CIRCULO pressionado
-                            if player1.State('kick'):
+                            if player1.State('kick') and not constants.game_start:
                                 player1.Chute_1()
                         if event.button == 3: # Botão QUADRADO pressionado
-                             if player1.State('punch'):
+                             if player1.State('punch') and not constants.game_start:
                                 player1.Soco_1()
                                 
                         if event.button == 5: # Botão R1 pressionado
-                            if player1.State('defending'):
+                            if player1.State('defending') and not constants.game_start:
                                 player1.Defesa()
                         
                         if event.button == 9:
-                            levels.Pause()
+                            if not  player1.com and not constants.reset  and not constants.game_start:
+                                pygame.mixer.music.pause()
+                                levels.Pause()
+                            
                                 
                     if event.type == pg.JOYBUTTONUP:
                             if event.button == 5:
                                 player1.stop()
                     
-                   
-                    
-                
                         # Botao R1
             #        if button_L1: # Botão L1 pressionado
             #        
@@ -313,26 +297,39 @@ def main():
             #        if button_start: # Botão START pressionado
         #==============================================================================
 #==============================================================================
-        """ Realiza af funçoes necessarias para relizar ad achoes no game"""  
-        if len(enemy_l) == 0 and not  boss_list.has(boss1):
-            player1.stop()
-            player1.Vitoria()
+        """ Realiza af funçoes necessarias para relizar ad achoes no game"""
+#==============================================================================
+        
                      
         for Enemy in enemy_l:
-            collide.check_colide(player1,Enemy)        
-            Enemy.ai(player1)
+            if not constants.game_start:
+                collide.check_colide(player1,Enemy)        
+                Enemy.ai(player1)
             
         
         if len(enemy_list)<10:
             collide.check_colide(player1,boss1)
             boss1.ai(player1)
-        
+            
+        if constants.Pause:
+            pygame.mixer.music.unpause()
+            
         if constants.reset:
+            levels.Music_play(0)
+            constants.i = 0
+            constants.d = 0
+            constants.s = 0
+            constants.teste = 0
+            player1.rect.x +=1
+            player1.com = False
+            enemys_list = backup_enemys_list [:]
             enemy_l = backup_enemy_l[:]
             enemy_list.remove()
             enemy_list = backup_enemy.copy()
             boss_list.remove()
             boss_list = backup_boss.copy()
+            for i,Enemy in enumerate(enemy_l):
+                Enemy.Re_life(enemys_list[i][1],enemys_list[i][2],enemys_list[i][3])
             constants.reset = False
 
         player1_list.update()
@@ -343,7 +340,7 @@ def main():
 #==============================================================================
         """Define a posiçao da tela em relaçao ao cenario"""
         current_position = player1.rect.x + abs(current_level.world_shift)
-        if current_position > 300 and  current_position < 2300 and current_level_no != 1:
+        if current_position > 200 and  current_position < 2000 and current_level_no != 1:
             if player1.rect.right >= 800:
                 diff = player1.rect.right - 800
                 player1.rect.right = 800
@@ -353,9 +350,9 @@ def main():
                 current_level.shift_world(-diff)
   
             
-            if player1.rect.left <= 300:
-                diff = 300 - player1.rect.left
-                player1.rect.left = 300
+            if player1.rect.left <= 200:
+                diff = 200 - player1.rect.left
+                player1.rect.left = 200
                 boss1.rect.left += diff
                 for Enemy in enemy_l:
                     Enemy.rect.left += diff
@@ -365,21 +362,38 @@ def main():
         """Desenha tudo o que aparece na tela"""
 #==============================================================================
         current_level.draw(screen)                                             #Desenha a fase
-        player1_list.draw(screen)                                              #Desenha o Player
-        enemy_list.draw(screen)                                                #Desenha os Inimigos
-        #So desenha o boss quando cumprir o requisito
+        
+        #Desenha os Inimigo
+        enemy_list.draw(screen)                                               
+        for Enemy in enemy_l:
+            if Enemy.ml:
+                Enemy.enemy_hud(screen)
+                
+        #Desenha o boss        
         if len(enemy_list)<10:
             boss_list.draw(screen)
             boss1.boss_hud(screen)
+            if constants.i==0:
+                pygame.mixer.music.stop()
+                constants.i = 1
+            if constants.d == 0:
+                levels.Music_play(1)
+                constants.d = 1
+        #Desenha o Player        
+        player1_list.draw(screen)                                              
         player1.player_hud(screen)
-        
         if not player1.live and player1.Lives == 0:
-            player.dead_screen(screen,player1)
+            player.dead_screen(screen,player1,current_position)
+            pygame.mixer.music.stop()
             
-            
-        for Enemy in enemy_l:
-            if Enemy.ml:
-                Enemy.enemy_hud(screen)                
+        if len(enemy_l) == 0 and not  boss_list.has(boss1):
+            player.Stage_Clear(screen,player1)
+            player1.stop()
+            player1.Vitoria()
+        if constants.game_clear:
+            player.Game_Clear(screen,player1,current_position)
+        if constants.game_start:
+            player.Game_Start(screen,player1)
 #==============================================================================     
         clock.tick(constants.FPS) 
         pg.display.flip()

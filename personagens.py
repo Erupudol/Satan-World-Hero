@@ -1,4 +1,4 @@
-import pygame , spritesheet_functions, player
+import pygame , spritesheet_functions, player, Sounds
 import constants,funçoes_players
 
 
@@ -127,6 +127,7 @@ class MrSatan(player.Player):
                     self.image = self.Salto_Para_Frames_R[3]
                 elif 9.9 < self.change_y <= 10:
                     self.image = self.Salto_Para_Frames_R[4]
+                    Sounds.Landing.play()
                    
             elif self.direction == "L"and self.jump:              
                 if -10 <= self.change_y <= -9.9 :
@@ -139,6 +140,8 @@ class MrSatan(player.Player):
                     self.image = self.Salto_Para_Frames_L[3]
                 elif 9.9 < self.change_y <= 10:
                     self.image = self.Salto_Para_Frames_L[4] 
+                    Sounds.Landing.play()
+                    
         #Salto em Movimento 
         elif self.change_x != 0 and self.change_y != 0:
             self.rect.y += self.change_y
@@ -155,6 +158,7 @@ class MrSatan(player.Player):
                     self.image = self.Salto_Move_Frames_R[3]
                 elif 9.9 < self.change_y <= 10:
                     self.image = self.Salto_Move_Frames_R[4]
+                    Sounds.Landing.play()
             elif self.direction == "L" and self.jump:
                 if -10 <= self.change_y <= -9.9 :
                     self.image = self.Salto_Move_Frames_L[0]
@@ -166,6 +170,7 @@ class MrSatan(player.Player):
                     self.image = self.Salto_Move_Frames_L[3]
                 elif 9.9 < self.change_y <= 10:
                     self.image = self.Salto_Move_Frames_L[4]
+                    Sounds.Landing.play()
                     
         
         # Check and see if we hit anything

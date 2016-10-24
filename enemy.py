@@ -122,6 +122,7 @@ class Boss_Satan (cpu.CPU):
                     self.image = self.Salto_Para_Frames_R[3]
                 elif 9.9 < self.change_y <= 10:
                     self.image = self.Salto_Para_Frames_R[4]
+                    Sounds.Landing.play()
                    
             elif self.direction == "L"and self.jump:              
                 if -10 <= self.change_y <= -9.9 :
@@ -133,7 +134,8 @@ class Boss_Satan (cpu.CPU):
                 elif 2 < self.change_y <= 9.9:
                     self.image = self.Salto_Para_Frames_L[3]
                 elif 9.9 < self.change_y <= 10:
-                    self.image = self.Salto_Para_Frames_L[4] 
+                    self.image = self.Salto_Para_Frames_L[4]
+                    Sounds.Landing.play()
         #Salto em Movimento 
         elif self.change_x != 0 and self.change_y != 0:
             self.rect.y += self.change_y
@@ -150,6 +152,7 @@ class Boss_Satan (cpu.CPU):
                     self.image = self.Salto_Move_Frames_R[3]
                 elif 9.9 < self.change_y <= 10:
                     self.image = self.Salto_Move_Frames_R[4]
+                    Sounds.Landing.play()
             elif self.direction == "L" and self.jump:
                 if -10 <= self.change_y <= -9.9 :
                     self.image = self.Salto_Move_Frames_L[0]
@@ -161,6 +164,7 @@ class Boss_Satan (cpu.CPU):
                     self.image = self.Salto_Move_Frames_L[3]
                 elif 9.9 < self.change_y <= 10:
                     self.image = self.Salto_Move_Frames_L[4]
+                    Sounds.Landing.play()
                     
         
         # Check and see if we hit anything
@@ -328,6 +332,7 @@ class Cell(cpu.CPU):
                     self.image = self.Salto_Para_Frames_R[3]
                 elif 9.9 < self.change_y <= 10:
                     self.image = self.Salto_Para_Frames_R[4]
+                    Sounds.Landing.play()
                    
             elif self.direction == "L"and self.jump:              
                 if -10 <= self.change_y <= -9.9 :
@@ -340,6 +345,7 @@ class Cell(cpu.CPU):
                     self.image = self.Salto_Para_Frames_L[3]
                 elif 9.9 < self.change_y <= 10:
                     self.image = self.Salto_Para_Frames_L[4] 
+                    Sounds.Landing.play()
         #Salto em Movimento 
         elif self.change_x != 0 and self.change_y != 0:
             self.rect.y += self.change_y
@@ -356,6 +362,7 @@ class Cell(cpu.CPU):
                     self.image = self.Salto_Move_Frames_R[3]
                 elif 9.9 < self.change_y <= 10:
                     self.image = self.Salto_Move_Frames_R[4]
+                    Sounds.Landing.play()
             elif self.direction == "L" and self.jump:
                 if -10 <= self.change_y <= -9.9 :
                     self.image = self.Salto_Move_Frames_L[0]
@@ -367,6 +374,7 @@ class Cell(cpu.CPU):
                     self.image = self.Salto_Move_Frames_L[3]
                 elif 9.9 < self.change_y <= 10:
                     self.image = self.Salto_Move_Frames_L[4]
+                    Sounds.Landing.play()
                     
         
         # Check and see if we hit anything
@@ -532,6 +540,7 @@ class Cell_Jr(cpu.CPU):
                     self.image = self.Salto_Para_Frames_R[3]
                 elif 9.9 < self.change_y <= 10:
                     self.image = self.Salto_Para_Frames_R[4]
+                    Sounds.Landing.play()
                    
             elif self.direction == "L"and self.jump:              
                 if -10 <= self.change_y <= -9.9 :
@@ -543,7 +552,8 @@ class Cell_Jr(cpu.CPU):
                 elif 2 < self.change_y <= 9.9:
                     self.image = self.Salto_Para_Frames_L[3]
                 elif 9.9 < self.change_y <= 10:
-                    self.image = self.Salto_Para_Frames_L[4] 
+                    self.image = self.Salto_Para_Frames_L[4]
+                    Sounds.Landing.play()
 #        #Salto em Movimento 
 #        elif self.change_x != 0 and self.change_y != 0:
 #            self.rect.y += self.change_y

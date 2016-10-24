@@ -14,6 +14,7 @@ class CPU (pygame.sprite.Sprite):
         self.mp = self.Mp_Max
         self.Atk = 0
         self.Def = 0
+        self.onGame = False
 #==============================================================================
         """constantes de animaçao""" 
 #==============================================================================
@@ -270,6 +271,7 @@ class CPU (pygame.sprite.Sprite):
         
         # If it is ok to jump, set our speed upwards
         if len(platform_hit_list) > 0 or self.rect.bottom >= constants.SCREEN_HEIGHT - self.Muda_Rota:
+            Sounds.Jump.play()
             self.change_y = -10
             self.jump = True
             self.onGround = False
@@ -314,7 +316,7 @@ class CPU (pygame.sprite.Sprite):
         
     def Chute_1 (self):
         self.kick = True
-        Sounds.kick.play()
+        Sounds.Kick.play()
     
     def time_rec(self):
         if self.rec:
@@ -343,6 +345,16 @@ class CPU (pygame.sprite.Sprite):
                     else:
                         self.hp = 0
                         self.live = False
+                        
+    def Re_life(self,pos_initx, pos_inity,rota_init):
+        self.live = True
+        self.hp = self.Hp_Max
+        self.Muda_Rota = rota_init
+        self.rect.x = pos_initx
+        self.rect.y = pos_inity - self.rect.height- self.Muda_Rota
+        self.dmg = False
+        self.jump = False
+        
                                             
                 
 #==============================================================================

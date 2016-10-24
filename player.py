@@ -1,10 +1,7 @@
-import pygame, Sounds, Main
+import pygame, Sounds ,levels
  
 import constants
- 
-from platforms import MovingPlatform
-from spritesheet_functions import *
-from funçoes_players import *
+
 import math
 
 class Player (pygame.sprite.Sprite):
@@ -73,7 +70,7 @@ class Player (pygame.sprite.Sprite):
         
         
         # What direction is the player facing?
-        self.Lives = 0
+        self.Lives = 2
         self.direction = "R"                 
         self.level = None
         """Estados"""
@@ -161,6 +158,7 @@ class Player (pygame.sprite.Sprite):
         
         # If it is ok to jump, set our speed upwards
         if len(platform_hit_list) > 0 or self.rect.bottom >= constants.SCREEN_HEIGHT - self.Muda_Rota:
+            Sounds.Jump.play()
             self.change_y = -10
             self.jump = True
             self.onGround = False
@@ -200,11 +198,11 @@ class Player (pygame.sprite.Sprite):
         
     def Soco_1 (self):
         self.punch = True
-#        Sounds.Punch.play()
+        Sounds.Punch.play()
         
     def Chute_1 (self):
         self.kick = True
-#        Sounds.kick.play()
+        Sounds.Kick.play()
         
     def Recive_Dmg(self,enemy):
         if self.defending:
@@ -309,11 +307,8 @@ class Player (pygame.sprite.Sprite):
 #==============================================================================
 # Tela de Morte Player        
 #==============================================================================
-def dead_screen(screen,player):
-    if constants.regrecive > 0:
-        black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
-        black_surf.fill((0, 0, 0, 180))
-        screen.blit(black_surf, (0, 0))
+def dead_screen(screen,player, cp):
+    if constants.regrecive >= 0:
     #==============================================================================
         #Carre as Fontes    
     #==============================================================================
@@ -325,50 +320,70 @@ def dead_screen(screen,player):
     #==============================================================================
         #Carrega Es informaçoes:
     #==============================================================================
-        black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
-        black_surf.fill((0, 0, 0, 180))
-        screen.blit(black_surf, (0, 0))
-        you_died_rect = you_died_txt.get_rect()
-        you_died_rect.center = ((constants.SCREEN_WIDTH/2),(constants.SCREEN_HEIGHT/5-100))
-        screen.blit(you_died_txt, you_died_rect)
-        continue_rect = you_died_txt.get_rect()
-        continue_rect.center = ((100+constants.SCREEN_WIDTH/2),(constants.SCREEN_HEIGHT/5))
-        screen.blit(continue_txt, continue_rect)    
-        cont_txt = Cont.render(str(constants.regrecive),True,constants.WHITE,None)
-        cont_txt_rect = cont_txt.get_rect()
-        cont_txt_rect.center = ((constants.SCREEN_WIDTH/2),(constants.SCREEN_HEIGHT/2))
-        screen.blit (cont_txt,cont_txt_rect)
-        if constants.delays > 60:
+        if constants.regrecive <=10:
+            black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
+            black_surf.fill((0, 0, 0, 180))
+            screen.blit(black_surf, (0, 0))
+            you_died_rect = you_died_txt.get_rect()
+            you_died_rect.center = ((constants.SCREEN_WIDTH/2),(constants.SCREEN_HEIGHT/5-100))
+            screen.blit(you_died_txt, you_died_rect)    
+            continue_rect = you_died_txt.get_rect()
+            continue_rect.center = ((100+constants.SCREEN_WIDTH/2),(constants.SCREEN_HEIGHT/5))
+            screen.blit(continue_txt, continue_rect)    
+            cont_txt = Cont.render(str(constants.regrecive),True,constants.WHITE,None)
+            cont_txt_rect = cont_txt.get_rect()
+            cont_txt_rect.center = ((constants.SCREEN_WIDTH/2),(constants.SCREEN_HEIGHT/2))
+            screen.blit (cont_txt,cont_txt_rect)
+        if constants.n == 0:
+            Sounds.contagem()
+            constants.n = 1
+        if constants.delays > 40:
+            constants.n = 0
             constants.delays = 0
-            constants.regrecive -= 1
+            constants.regrecive -= 1            
         else:
             constants.delays += 1 
     
         for event in pygame.event.get():
+            if pygame.joystick.get_count() > 0:
+                if event.type == pygame.JOYBUTTONDOWN:
+                    if event.button == 2 or event.button == 9:
+                        constants.regrecive = 11
+                        player.live = True
+                        player.Lives = 2
+                        player.hp = constants.Hp_Max
+                        player.rect.x -= cp - 200
+                        player.Muda_Rota = 20
+                        player.rect.y = constants.SCREEN_HEIGHT - player.rect.height - player.Muda_Rota 
+                        player.dmg = False
+                        player.jump = False
+                        constants.reset = True
+                    elif event.button == 0:
+                        constants.regrecive -= 1
+               
+            else:
                 pressed = pygame.key.get_pressed()
                 if event.type == pygame.QUIT:
                     pygame.quit() # Fecha a janela se o usuário clicar em fechar
                     quit()
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RETURN:
-                        constants.regrecive = 10
+                        constants.regrecive = 11
                         player.live = True
                         player.hp = constants.Hp_Max
-                        player.rect.x = 200
+                        player.rect.x -= cp - 200
                         player.Muda_Rota = 20
                         player.rect.y = constants.SCREEN_HEIGHT - player.rect.height - player.Muda_Rota 
                         player.dmg = False
                         player.jump = False
                         constants.reset = True
-                        
-                        
-                            
-                        
-                        
                     if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
                         pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
                         quit()    
     else:
+        if constants.s == 0:
+            Sounds.Game_Over.play(0)
+            constants.s = 1
         black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
         black_surf.fill((0, 0, 0, 255))
         screen.blit(black_surf, (0, 0))
@@ -378,12 +393,175 @@ def dead_screen(screen,player):
         Game_over_Rect.center = ((constants.SCREEN_WIDTH/2),(constants.SCREEN_HEIGHT/2))
         screen.blit(Game_over, Game_over_Rect)
         for event in pygame.event.get():
+            if pygame.joystick.get_count() > 0:
+                 if event.type == pygame.JOYBUTTONDOWN:
+                     if event.button == 2 or 9:
+                        levels.Start_Screen()
+                        constants.regrecive = 11
+                        player.live = True
+                        player.hp = constants.Hp_Max
+                        player.rect.x -= cp - 200
+                        player.Muda_Rota = 20
+                        player.rect.y = constants.SCREEN_HEIGHT - player.rect.height - player.Muda_Rota 
+                        player.dmg = False
+                        player.jump = False
+                        constants.reset = True
+                        
+            else:
                 pressed = pygame.key.get_pressed()
                 if event.type == pygame.QUIT:
                     pygame.quit() # Fecha a janela se o usuário clicar em fechar
                     quit()
                 if event.type == pygame.KEYDOWN:
-                    if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])) or pygame.K_RETURN:
+                    if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
                         pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
                         quit() 
+                    if pygame.K_RETURN:
+                        levels.Start_Screen()
+                        constants.regrecive = 11
+                        player.live = True
+                        player.hp = constants.Hp_Max
+                        player.rect.x -= cp - 600
+                        player.Muda_Rota = 20
+                        player.rect.y = constants.SCREEN_HEIGHT - player.rect.height - player.Muda_Rota 
+                        player.dmg = False
+                        player.jump = False
+                        constants.reset = True
+                        constants.d = 0
+#==============================================================================
+# Termina a Fase
+#==============================================================================
+def Stage_Clear(screen,player):
+#==============================================================================
+#     Fonte
+#==============================================================================
+    stage_clear = constants.Get_Font(constants.SaiyanFont,100)
+    Stage_clear = stage_clear.render("Stage Clear",True,constants.WHITE,None)
+    Stage_clear_Rect = Stage_clear.get_rect()
+    Stage_clear_Rect.center = ((constants.SCREEN_WIDTH/2),(constants.SCREEN_HEIGHT/2))
+#==============================================================================
+#    Tela 
+#==============================================================================
+    black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
+    black_surf.fill((0, 0, 0, 180))
+    screen.blit(black_surf, (0, 0))
+    screen.blit(Stage_clear,Stage_clear_Rect)
+    for event in pygame.event.get():
+            if pygame.joystick.get_count() > 0:
+                 if event.type == pygame.JOYBUTTONDOWN:
+                     if event.button == 2 or 9:
+                        constants.game_clear = True
+            else:
+                pressed = pygame.key.get_pressed()
+                if event.type == pygame.QUIT:
+                    pygame.quit() # Fecha a janela se o usuário clicar em fechar
+                    quit()
+                if event.type == pygame.KEYDOWN:
+                    if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
+                        pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
+                        quit() 
+                    if pygame.K_RETURN:
+                        constants.game_clear = True
+                        
+def Game_Start(Screen,player):
+    black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
+    black_surf.fill((0, 0, 0,0))
+    Screen.blit(black_surf, (0, 0))
+    if  45 < player.rect.x :
+        if constants.b == 0:
+            Sounds.Read_go.play()
+            constants.b = 1
+        if constants.e <=20:
+            Ready = constants.Get_Font(constants.SaiyanFont,constants.f_s)
+            ready_txt = Ready.render("Ready",True, constants.WHITE, None)
+            ready_txt_rect = ready_txt.get_rect()
+            ready_txt_rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT/2-25)
+            Screen.blit(ready_txt, ready_txt_rect)
+            constants.f_s += 1
+            constants.e += 1
+        elif 20< constants.e <= 40:
+            if constants.a == 0:
+                constants.f_s = 72
+                constants.a = 1
+            go = constants.Get_Font(constants.SaiyanFont,constants.f_s)
+            go_txt = go.render("Go", True ,constants.WHITE, None)
+            go_txt_rect = go_txt.get_rect()
+            go_txt_rect.center =(constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT/2-25)
+            Screen.blit(go_txt, go_txt_rect)
+            constants.f_s += 1
+            constants.e += 1
+        else:
+            constants.e = 0
+            constants.f_s = 72
+            constants.b = 0
+    
+    if player.rect.x <= 200:
+        if player.State('move'):
+            player.go_right()
+    else:
+        player.stop()
+        constants.game_start = False
         
+def Game_Clear(Screen,player,cp):
+    
+    background = pygame.image.load("Fotos\Start Screen.png").convert()
+    if constants.teste == 0:
+        pygame.mixer.music.load("Music\GameClear.ogg")
+        pygame.mixer.music.set_volume(0.3)
+        pygame.mixer.music.play(-1)
+        constants.teste = 1
+    
+    Bla= constants.Get_Font(constants.BitFont,72)
+    Bla_Bla = Bla.render("Satan World Hero", True, constants.WHITE, None)
+    Bla_Bla_Rect = Bla_Bla.get_rect()
+    
+    black_surf = pygame.Surface((constants.SCREEN_WIDTH, constants.SCREEN_HEIGHT), pygame.SRCALPHA)
+    black_surf.fill((0, 0, 0, 0))
+    Screen.blit(black_surf, (0, 0))
+    if constants.y >= constants.SCREEN_HEIGHT/2 :
+        Bla_Bla_Rect.center = (constants.SCREEN_WIDTH / 2, constants.y)
+        Screen.blit(background, (0,0))
+        Screen.blit( Bla_Bla,Bla_Bla_Rect)
+        constants.y -=5
+    else:
+       Bla_Bla_Rect.center = (constants.SCREEN_WIDTH / 2, constants.SCREEN_HEIGHT/2)
+       Screen.blit(background, (0,0))
+       Screen.blit( Bla_Bla,Bla_Bla_Rect)
+       
+       for event in pygame.event.get():
+            if pygame.joystick.get_count() > 0:
+                 if event.type == pygame.JOYBUTTONDOWN:
+                     if event.button == 2 or 9:
+                        levels.Start_Screen()
+                        constants.regrecive = 11
+                        player.live = True
+                        player.hp = constants.Hp_Max
+                        player.rect.x -= cp - 200
+                        player.Muda_Rota = 20
+                        player.rect.y = constants.SCREEN_HEIGHT - player.rect.height - player.Muda_Rota 
+                        player.dmg = False
+                        player.jump = False
+                        constants.reset = True
+                        constants.game_clear = False
+                        
+            else:
+                pressed = pygame.key.get_pressed()
+                if event.type == pygame.QUIT:
+                    pygame.quit() # Fecha a janela se o usuário clicar em fechar
+                    quit()
+                if event.type == pygame.KEYDOWN:
+                    if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4]) or (pressed[pygame.K_RALT] and pressed[pygame.K_F4])):
+                        pygame.quit() # Fecha a janela se o usuário pressionar ALT+F4
+                        quit() 
+                    if pygame.K_RETURN:
+                        levels.Start_Screen()
+                        constants.regrecive = 11
+                        player.live = True
+                        player.hp = constants.Hp_Max
+                        player.rect.x -= cp - 200
+                        player.Muda_Rota = 20
+                        player.rect.y = constants.SCREEN_HEIGHT - player.rect.height - player.Muda_Rota 
+                        player.dmg = False
+                        player.jump = False
+                        constants.reset = True
+                        constants.game_clear = False

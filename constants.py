@@ -19,17 +19,27 @@ YELLOW = (253, 235, 7)
 # Screen dimensions
 SCREEN_WIDTH  = 1150
 SCREEN_HEIGHT = 700
+y = 2000
 #Gerais:
 Game_loop = False
 reset =  False
+Pause = False
+game_clear = False
+game_start = False
 FPS = 60
-i = 0
-s = 0
-d = 0
-delay_dead = 0
-delays = 0
-teste = 0
-count = 0
+#contadores e sons
+i = 0 #Usado
+s = 0 #Usado
+d = 0 #Usado
+n = 0 #Usado
+e = 0 #Usado
+a = 0 #Usado
+b = 0 #Usado
+delay_dead = 0 #Usado
+delays = 0 #Usado
+teste = 0 #Usado
+count = 0 #Usado
+f_s = 72 #Usado
 
 """Status dos Personagens:"""
 Hp = 0 #Hp Atual do Jogador 

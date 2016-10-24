@@ -73,7 +73,7 @@ class Level_01(Level):
         # Call the parent constructor
         Level.__init__(self, player,enemy,boss)
         
- 
+        
         self.background = pygame.image.load("Fotos\map.png").convert()
         self.background=  pygame.transform.scale(self.background,(5500,700))
         self.background.set_colorkey(constants.WHITE)
@@ -119,8 +119,8 @@ def Start_Screen():
         joystick.init()    
     
     pygame.mixer.music.load("Music\StartScreean.ogg")
-    pygame.mixer.music.set_volume(0.6)
-    pygame.mixer.music.play()
+    pygame.mixer.music.set_volume(0.3)
+    pygame.mixer.music.play(-1)
     
     
     background = pygame.image.load("Fotos\Start Screen.png").convert()
@@ -156,7 +156,8 @@ def Start_Screen():
                 if event.type == pygame.JOYBUTTONDOWN:
                     if event.button == 9:
                         pygame.mixer.music.stop()
-                        instart = False 
+                        instart = False
+                        constants.game_start = True
                     else:
                         #ERRROU
                         Sounds.Errou.play()
@@ -172,7 +173,8 @@ def Start_Screen():
                         
                     elif pressed[pygame.K_RETURN]:
                         pygame.mixer.music.stop()
-                        instart = False 
+                        instart = False
+                        constants.game_start = True
                     else:
                         #ERRROU
                         Sounds.Errou.play()
@@ -208,7 +210,9 @@ def Pause():
                 if event.type == pygame.QUIT:
                     pygame.quit() 
                 if event.type == pygame.JOYBUTTONDOWN:
-                    instart = False
+                     if event.button == 9:
+                        instart = False
+                        constants.Pause = True
             else:       
                 pressed = pygame.key.get_pressed()
                 if event.type == pygame.QUIT:
@@ -217,5 +221,19 @@ def Pause():
                     if ((pressed[pygame.K_LALT] and pressed[pygame.K_F4])):
                         pygame.quit() 
                         
+                        
                     elif pressed[pygame.K_RETURN]:
                         instart = False
+                        constants.Pause = True
+def Music_play(n):
+    if n==1:
+        pygame.mixer.music.load("Music\Raging Evil.ogg")
+        pygame.mixer.music.set_volume(0.3)
+        pygame.mixer.music.play(-1)
+    elif n == 0:
+         pygame.mixer.music.load("Music\Stage.ogg")
+         pygame.mixer.music.set_volume(0.3)
+         pygame.mixer.music.play(-1)
+         
+
+    
